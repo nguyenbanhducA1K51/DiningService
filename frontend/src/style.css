@@ -1,0 +1,46 @@
+/* style for image in admin page */
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.image-container img {
+    max-width: 100%;
+    height: auto;
+}
+
+.overlay-button {
+    /* position: absolute; */
+    bottom: 0;
+    /* Align the button to the bottom of the container */
+    left: 50%;
+    /* transform: translateX(-50%); */
+}
+
+.image-container:hover .overlay-button {
+    display: block;
+}
+
+
+.colorless-button {
+    background: none;
+    /* Remove background */
+    border: none;
+    /* Remove border */
+    padding: 0;
+    /* Remove padding */
+    font-size: 24px;
+    /* Set the icon size */
+    color: #000;
+    /* Change the color of the icon (you can adjust the color) */
+}
+.but{
+    color:blueviolet
+}
+.col-1-custom {
+    flex: 0 0 8.33%;
+    /* 1/12 of the available space (100% / 12 columns) */
+    max-width: 8.33%;
+    /* Optional: Sets a maximum width for the column */
+}

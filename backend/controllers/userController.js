@@ -2,8 +2,6 @@ import asyncHandler from "express-async-handler"
 import User from '../models/userModel.js'
 import generateToken from '../utils/generateToken.js'
 const authUser = asyncHandler(async (req, res) => {
-    
-
     const { email, password } = req.body
     const user = await User.findOne({ email })
     if (user && user.matchPassword(password)) {
@@ -26,7 +24,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
     const userExists = await User.findOne({ email: email })
 
-    try {
+
         if (userExists) {
             res.status(400);
             throw new Error("user exist")
@@ -49,18 +47,16 @@ const registerUser = asyncHandler(async (req, res) => {
             res.status(400)
             throw new Error("Invalid user data")
         }
-    } catch (error) {
-        console.log(error)
-        throw new Error (error)
-    }
-        
-    
-    
+   
+
+
+
 
 })
 
 const logoutUser = asyncHandler((req, res) => {
     console.log("log out from browserr")
+    console.log(req)
 
     res.cookie('jwt', '', {
         httpOnly: true,
@@ -83,7 +79,7 @@ const getUserProfile = asyncHandler((req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
 
     const user = await User.findById(req.user._id)
-    
+
     if (user) {
         user.name = req.body.name || user.name;
         user.email = req.body.email || user.email

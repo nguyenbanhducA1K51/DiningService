@@ -5,12 +5,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import { LinkContainer } from "react-router-bootstrap";
 import { useLogoutMutation } from '../slices/userApiSlice'
 import { logout } from '../slices/authSlices'
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import "../style.css"
 const Header = () => {
     const [logoutApiCall] = useLogoutMutation();
     const dispatch = useDispatch()
-    const navigate=useNavigate()
-    const logoutHandler =  async ()=>{
+    const navigate = useNavigate()
+    const logoutHandler = async () => {
         try {
             //  this function call will clear the cookie
             await logoutApiCall().unwrap();
@@ -18,7 +19,7 @@ const Header = () => {
             dispatch(logout())
             navigate('/')
 
-        } catch(error) {
+        } catch (error) {
             console.log(error)
         }
     }
@@ -50,34 +51,46 @@ const Header = () => {
                                         Logout
                                     </NavDropdown.Item>
 
-                                </NavDropdown>
-                            </>) : (<>
 
-                                <LinkContainer to="/login">
 
-                                    <NavLink >
-                                        <FaSignInAlt />  Sign in
+                                    <LinkContainer to= "/admin">
 
-                                    </NavLink>
+                                    <NavDropdown.Item>
+                                        Admin
+                                    </NavDropdown.Item>
                                 </LinkContainer>
+                                
+                            
+                            </NavDropdown>
+                              
 
-                                <LinkContainer to="/register">
-                                    <NavLink >
-                                        <FaSignOutAlt />  Sign Up
+                        </>) : (<>
 
-                                    </NavLink>
+                            <LinkContainer to="/login">
 
-                                </LinkContainer>
+                                <NavLink >
+                                    <FaSignInAlt />  Sign in
 
-                            </>)}
+                                </NavLink>
+                            </LinkContainer>
+
+                            <LinkContainer to="/register">
+                                <NavLink >
+                                    <FaSignOutAlt />  Sign Up
+
+                                </NavLink>
+
+                            </LinkContainer>
+
+                        </>)}
 
 
-                        </Nav>
+                    </Nav>
 
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
-        </header>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
+        </header >
     )
 }
 

@@ -17,6 +17,7 @@ import store from './store'
 import { Provider } from 'react-redux'
 import PrivateRoute from './components/PrivateRoute.jsx'
 
+import AdminScreen from './screens/AdminScreen.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
 
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />
+      <Route path='/admin' element={<AdminScreen />}/>
       
       <Route path='' element={<PrivateRoute/>}>
         

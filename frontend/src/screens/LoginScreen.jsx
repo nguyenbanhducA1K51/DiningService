@@ -17,18 +17,22 @@ const LoginScreen = () => {
     const  {userInfo}=useSelector( (state)=>state.auth )
 
     useEffect(() => {
-        // if (userInfo){
-        //     navigate ('/')
-        // }
+        if (userInfo){
+            navigate ('/')
+        }
     }, [navigate, userInfo])
     
     const submitHandler = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         try {
             const res = await login({ email, password }).unwrap()
+            console.log(res.data)
+            console.log(res)
+            
             dispatch(setCredentials({ ...res }))
             navigate('/')
         } catch (err) {
+            console.log(err)
             toast.error(err?.data?.message||err.error)
         }     
     }
