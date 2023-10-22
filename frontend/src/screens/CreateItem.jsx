@@ -1,15 +1,23 @@
 import { Form, Button, Row, Col, FormGroup, FormLabel, FormControl } from 'react-bootstrap'
 import FormContainer from "../components/FormContainer"
 import { toast } from "react-toastify"
-import { useCreateFoodItemMutation } from '../slices/foodApiSlice'
+// import { useCreateFoodItemMutation } from '../slices/foodApiSlice'
 import { useState, useEffect } from 'react'
+import { createItem, selectError} from '../slices/foodItemSlice'
+import { useDispatch,useSelector } from 'react-redux'
 const CreateItemScreen = () => {
-
-    const [createFoodItem, { isLoading }] = useCreateFoodItemMutation()
+    const dispatch = useDispatch()
+    const error = useSelector(selectError)
     const [foodTitle, setFoodTitle] = useState('')
     const [foodDescription, setFoodDescription] = useState('')
     const [imageFile, setImageFile] = useState(null)
 
+    useEffect(() => {
+        if (error) {
+            
+            toast.error(error)
+        }
+    },[error])
     const handleFoodTitleChange = (e) => {
         setFoodTitle(e.target.value)
     }
@@ -17,6 +25,7 @@ const CreateItemScreen = () => {
 
         setFoodDescription(e.target.value)
     }
+
     const handleImageFileChange = (e) => {
         setImageFile(e.target.files[0])
     }
@@ -31,16 +40,15 @@ const CreateItemScreen = () => {
         formData.append("name", foodTitle)
         formData.append("description", foodDescription)
         formData.append("file", imageFile, "foodImg.png")
-        try {
-            const res = await createFoodItem(formData).unwrap()
+        dispatch(createItem(formData))
+        if (!error) {
             toast.success("success")
-        } catch (err) {
-            toast.error(err?.data?.message || err.error)
-
         }
+      
     }
     return (
         <div>
+            <span> error: {error}</span>
 
             <FormContainer>
                 <Form onSubmit={handleSubmit}>

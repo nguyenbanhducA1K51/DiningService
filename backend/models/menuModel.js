@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-const foodScheduleSchema = mongoose.Schema({
+const menuSchema = mongoose.Schema({
     
     weekday: {
         type: String,
@@ -10,17 +10,17 @@ const foodScheduleSchema = mongoose.Schema({
         ref:'FoodItem'
     }
 })
-export const FoodScheduleSchema=mongoose.model("FoodScheduleSchema",foodScheduleSchema)
+export const Menu=mongoose.model("Menu", menuSchema)
 
 
 // import mongoose from 'mongoose';
 // //import {Address} from './Address.js';
 // export const Channel = mongoose.model('Channel',
 //     {   
-//         id: mongoose.Schema.Types.ObjectId,
-//         name: String,
-//         path: String,
-//         subscribers: [{
+    //         id: mongoose.Schema.Types.ObjectId,
+    //         name: String,
+    //         path: String,
+    //         subscribers: [{
 //                        type: mongoose.Schema.Types.ObjectId,
 //                        ref: 'Address'
 //                       }],

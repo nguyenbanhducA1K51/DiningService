@@ -40,8 +40,7 @@ const RegisterScreen = () => {
                 navigate('/')
 
                 toast.success("success!")
-                
-            toast.error('fake errorr')
+        
             } catch (err) {
     
                 toast.error(err?.data?.message ||err.error)

@@ -18,7 +18,7 @@ const ListFoodItem = () => {
         dispatch(deleteAll())
     }
     const deleteOne = (item) => {
-        dispatch(deleteItem({ food_id: item.food_id }))
+        dispatch(deleteItem({ food_id: item._id }))
         dispatch(fetchItems())
     }
     const displayItem = (item) => {
@@ -60,7 +60,6 @@ const ListFoodItem = () => {
     return (
         <>
             <span> error {error}</span>
-            <span>{JSON.stringify(foodItems)}</span>
             <button className="btn btn-light" onClick={(e) => deleteAll()}> Delete all</button>
             <button className="btn btn-dark" onClick={(e)=>dispatch(fetchItems())}> fetch</button>
 

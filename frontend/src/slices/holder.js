@@ -1,6 +1,7 @@
 import { apiSlice } from './apiSlice'
 
-const FOOD_URL = "/api/admin/food"
+const FOOD_URL = "/api/dining/food"
+const MENU_URL="api/dining/menu"
 // const USERS_URL = "/api/users"
 export const foodAPISlice = apiSlice.injectEndpoints({
 
@@ -34,7 +35,9 @@ export const foodAPISlice = apiSlice.injectEndpoints({
                 method: "POST"
             
             })
-        })
+        }),
+
+        
     })
 
 })

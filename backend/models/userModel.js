@@ -14,8 +14,14 @@ const userSchema = mongoose.Schema({
     password: {
         type:String,
         required:true
-    }
+    },
 
+    permission: {
+        type: Number,
+        min: 0,
+        max: 9,
+        default: 0,
+    },
 }, {
     timestamps:true
 })

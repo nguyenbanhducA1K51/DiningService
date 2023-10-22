@@ -1,50 +1,81 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { useGetFoodItemMutation, useDelFoodAllMutation, useDelFoodSingleMutation } from './foodApiSlice'
-
 import axios from "axios"
 const initialState = {
     foodList: [],
     status: "iddle",
     error: null
 }
+const FOOD_API = "api/dining/food"
+const FETCH_ITEM = `${FOOD_API}/all`
+const CREATE_ITEM = `${FOOD_API}`
+const DELETE_ITEM = `${FOOD_API}/delone`
+const DELETE_ALL=`${FOOD_API}/delall`
 export const fetchItems = createAsyncThunk(
     'foodItem/fetchItems', async () => {
-        const res = await axios.get("api/admin/food/all")
+        const res = await axios.get(FETCH_ITEM)
         return res.data
     }
 )
 
+export const createItem = createAsyncThunk(
+    'foodItem/createItem', async (data, { rejectWithValue }) => {
+        try {
+            const res = await axios.post(CREATE_ITEM, data)
+            console.log("res from slice", res.data)
+            return res.data
+        } catch (error) {
+            if (!err.response) {
+                throw err
+            }
+
+            return rejectWithValue(err.response.data)
+        }
+
+    }
+)
 export const deleteItem = createAsyncThunk(
-    'foodItem/deleteItem', async (item) => {
-       
-        const res = await axios.post("api/admin/food/delone", item)
-        // console.log(res)
-        
-        return res.data
+    'foodItem/deleteItem', async (item, { rejectWithValue }) => {
+        try {
+            const res = await axios.post(DELETE_ITEM, item)
+            return res.data
+        } catch (error) {
+            if (!err.response) {
+                throw err
+            }
+            return rejectWithValue (err.response.data)
+        }
+      
 
     }
 )
 export const deleteAll = createAsyncThunk(
-    'foodItem/deleteAll', async () => {
-        const deleteAll = useDelFoodAllMutation()
-        const delResponse = await deleteAll().unwrap()
-        // console.log("del all response", delResponse)
-        return response
+    'foodItem/deleteAll', async ({ rejectWithValue }) => {
+        try {
+            const res = await axios.post(DELETE_ALL)
+            return res.data
+            
+        } catch (error) {
+            if (!err.response) {
+                throw err 
+            }
+            return rejectWithValue(err.response.data)
+        }
+       
     }
 )
 export const selectAllFoodItems = state => {
-    
+
     return state.foodItem.foodList
 }
 export const selectError = state => state.foodItem.error
-export const selectStatus=state=> state.foodItem.status
+export const selectStatus = state => state.foodItem.status
 const foodItemSlice = createSlice({
     name: "foodItem",
     initialState,
     reducer: {
     },
 
-        extraReducers(builder) {
+    extraReducers(builder) {
         builder
             .addCase(fetchItems.pending, (state, action) => {
                 state.status = "loading"
@@ -55,7 +86,7 @@ const foodItemSlice = createSlice({
             })
             .addCase(fetchItems.rejected, (state, action) => {
                 state.status = "failed"
-                state.error = action.error?.message || "default error message from get food list"
+                state.error = action.payload
             })
             .addCase(deleteItem.pending, (state, action) => {
                 state.stastus = "loading"
@@ -66,7 +97,7 @@ const foodItemSlice = createSlice({
             })
             .addCase(deleteItem.rejected, (state, action) => {
                 state.status = "failed"
-                state.error = action.error?.message || "default error message from delete"
+                state.error = action.payload
             })
             .addCase(deleteAll.pending, (state, action) => {
                 state.stastus = "loading"
@@ -77,10 +108,11 @@ const foodItemSlice = createSlice({
             })
             .addCase(deleteAll.rejected, (state, action) => {
                 state.status = "failed"
-                state.error = action.error?.message || "default error message from delete"
-            })
-    }
-    }
-)
+                state.error = action.payload
 
-export default foodItemSlice .reducer
+            })
+
+    }
+})
+
+export default foodItemSlice.reducer

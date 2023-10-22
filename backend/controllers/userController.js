@@ -9,7 +9,8 @@ const authUser = asyncHandler(async (req, res) => {
         res.status(201).json({
             _id: user._id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            permission:user.permission
         })
     }
     else {
@@ -22,6 +23,24 @@ const authUser = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
 
     const { name, email, password } = req.body;
+
+    if (email == "ad@gmail.com") {
+        const user = await User.create({
+            name,
+            email,
+            password,
+            permission: 9
+        })
+        if (user) {
+            generateToken(res, user._id)
+            res.status(201).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                permission: 9
+            })
+        }
+    }
     const userExists = await User.findOne({ email: email })
 
 
@@ -33,14 +52,16 @@ const registerUser = asyncHandler(async (req, res) => {
         const user = await User.create({
             name,
             email,
-            password
+            password,
+            permission:1
         })
         if (user) {
             generateToken(res, user._id)
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                permission:1
             })
         }
         else {

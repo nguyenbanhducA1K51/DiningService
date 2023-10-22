@@ -7,10 +7,19 @@ const initialState = {
     error: ""
 
 }
+const MENU_API = "api/dining/menu"
 export const fetchWeekMenu = createAsyncThunk(
-    'menu/fetchWeekMenu', async (data = getWeekDays()) => {
-        const res = await axios.get("api/menu/", data)
+    'menu/fetchWeekMenu', async (data) => {
+        console.log("data", data)
+        const params = data
+        const res = await axios.get(MENU_API, { params })
         console.log("response ", res.data)
+        return res.data
+    }
+)
+export const postWeekMenu = createAsyncThunk(
+    'menu/postWeekMenu', async (data = getWeekDays()) => {
+        const res = await axios.post(MENU_API, data)
         return res.data
     }
 )
@@ -35,18 +44,17 @@ const menuSlice = createSlice({
             const { date, item } = action.payload
             state.error = ""
             if (!date || !item) {
-                // console.log("Missing date or item in addItemToDate")
                 state.error = "Missing date or item in addItemToDate"
                 return
             }
-            const daymenu= state.weekmenu[date]
-            for (let i = 0; i < daymenu.length; i++){
+            const daymenu = state.weekmenu[date]
+            for (let i = 0; i < daymenu.length; i++) {
                 if (daymenu[i].name === item.name) {
-                    state.error = `item ${item} already in menu`
+                    state.error = `item ${item.name} already in menu`
                     return
                 }
             }
-           
+
             state.weekmenu[date].push(item)
 
         }
@@ -55,21 +63,24 @@ const menuSlice = createSlice({
             const { date, item } = action.payload
             state.error = ""
             if (!date || !item) {
-                // console.log("Missing date or item in addItemToDate")
                 state.error = "Missing date or item in addItemToDate"
                 return
             }
-            if (!state[date]) {
-                // console.log(`${date} not in menu date`)
-                state.error = "`${date} not in menu date` "
+
+            const daymenu = state.weekmenu[date]
+            let idx = -1
+            for (let i = 0; i < daymenu.length; i++) {
+                if (daymenu[i].name === item.name) {
+                    idx = i
+                    break
+
+                }
+            }
+            if (idx == -1) {
+                state.error = " Cant find item in the menu"
                 return
             }
-            if (!state[date].includes(item)) {
-                state.error = `item ${item} not in in menu`
-                return
-            }
-            const index= state[date].indexOf(item)
-            state[date].splice(index,1)
+            daymenu.splice(idx, 1)
         }
 
     },
@@ -82,9 +93,20 @@ const menuSlice = createSlice({
                 state.status = 'succeed'
                 state.weekmenu = action.payload
             })
-            .addCase(fetchWeekMenu.rejected, (state, error) => {
+            .addCase(fetchWeekMenu.rejected, (state, action) => {
                 state.status = "failed"
                 state.error = action.error?.message || "default menu fetch error"
+            })
+            .addCase(postWeekMenu.pending, (state, action) => {
+                state.status = "loading"
+            })
+            .addCase(postWeekMenu.fulfilled, (state, action) => {
+                state.status = "succeed"
+                
+            })
+            .addCase(postWeekMenu.rejected, (state, action) => {
+                state.status = "failed"
+                state.error = action.error?.message || "default menu post error"
             })
     }
 })

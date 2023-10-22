@@ -2,13 +2,12 @@ import multer from "multer"
 import express from 'express'
 import path from "path"
 import { createFood,getFood ,delOne,delAll} from '../controllers/FoodController'
-
+import { protect } from "../middleware/authMiddleware"
+import { postMenu, getMenu } from "../controllers/MenuController"
 const router = express.Router()
-const FOOD_ROUTE = "/food"
 const IMG_SAVE = path.join(__dirname, "../../storage/imagestorage")
 
 const fullPath = path.resolve(IMG_SAVE)
-console.log(fullPath)
 const foodImageStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, fullPath)
@@ -22,9 +21,15 @@ const foodImageStorage = multer.diskStorage({
 })
 const upload = multer({ storage: foodImageStorage })
 
-
+const FOOD_ROUTE = "/food"
+router.use(protect)
 router.post(`${FOOD_ROUTE}`, upload.single("file") ,createFood)
 router.get(`${FOOD_ROUTE}/all`, getFood)
 router.post(`${FOOD_ROUTE}/delone`, delOne)
-router.post(`${FOOD_ROUTE}/delall`,delAll)
-export default router
+router.post(`${FOOD_ROUTE}/delall`, delAll)
+
+
+const MENU_ROUTE = "/menu"
+router.post(`${MENU_ROUTE}`, postMenu)
+router.get(`${MENU_ROUTE}`, getMenu)
+export default router 
