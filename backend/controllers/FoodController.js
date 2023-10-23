@@ -10,7 +10,6 @@ const getFood = asyncHandler(async (req, res) => {
   try {
     const returnDocuments = await FoodItem.find({}).exec()
     console.log("return documents", returnDocuments.length)
-    console.log(returnDocuments)
     return res.status(201).json(returnDocuments)
   } catch (error) {
     console.log(error)

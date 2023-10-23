@@ -13,9 +13,7 @@ const Header = () => {
     const navigate = useNavigate()
     const logoutHandler = async () => {
         try {
-            //  this function call will clear the cookie
             await logoutApiCall().unwrap();
-            // this funcion call will clear the local storage
             dispatch(logout())
             navigate('/')
 
@@ -25,6 +23,13 @@ const Header = () => {
     }
 
     const { userInfo } = useSelector((state) => state.auth)
+    const isAuthorized = () => {
+        
+        if (userInfo.permission == 9) {
+            return true
+        }
+        return False
+    }
     return (
         <header>
 
@@ -33,7 +38,7 @@ const Header = () => {
 
                 <Container>
                     <LinkContainer to='/'>
-                        <Navbar.Brand > App </Navbar.Brand>
+                        <Navbar.Brand > Dining service </Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
@@ -42,24 +47,32 @@ const Header = () => {
                             {userInfo ? (<>
 
                                 <NavDropdown title={userInfo.name} id='username'>
-                                    <LinkContainer to="/profile">
+                                    {userInfo.permission != 9 ?
+                                        <>
+                                            <LinkContainer to="/profile">
                                         <NavDropdown.Item>
                                             Profile
                                         </NavDropdown.Item>
-                                    </LinkContainer>
+                                    </LinkContainer></>:<></>}
+                                    
                                     <NavDropdown.Item onClick={logoutHandler}>
                                         Logout
                                     </NavDropdown.Item>
 
 
 
-                                    <LinkContainer to= "/admin">
-
-                                    <NavDropdown.Item>
-                                        Admin
-                                    </NavDropdown.Item>
-                                </LinkContainer>
-                                
+                                    {isAuthorized()  ?
+                                        <>
+                                            <LinkContainer to="/admin">
+                    
+                                                <NavDropdown.Item>
+                                                    Admin
+                                                </NavDropdown.Item>
+                                            </LinkContainer>
+                                        </> : <></>
+                                    }
+                                            
+                                   
                             
                             </NavDropdown>
                               

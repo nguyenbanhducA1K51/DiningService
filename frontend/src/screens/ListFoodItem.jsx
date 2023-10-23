@@ -1,16 +1,15 @@
 
 import { useState, useEffect } from "react"
-import { Container } from "react-bootstrap"
-import { useSelector,useDispatch } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { toast } from "react-toastify"
-import { fetchItems , selectAllFoodItems,deleteAll,deleteItem,selectStatus,selectError} from "../slices/foodItemSlice"
+import { fetchItems, selectAllFoodItems, deleteAll, deleteItem, selectStatus, selectError } from "../slices/foodItemSlice"
 const ListFoodItem = () => {
     const imgSource = "/image/imagestorage/"
 
     const dispatch = useDispatch()
     const foodItems = useSelector(selectAllFoodItems)
     const error = useSelector(selectError)
-    const status=useSelector(selectStatus)
+    const status = useSelector(selectStatus)
     useEffect(() => {
         dispatch(fetchItems())
     }, [])
@@ -25,11 +24,11 @@ const ListFoodItem = () => {
         return (
             <div className="container ">
                 <div className="row">
-                    <div className="col-md-6 ">
-                        <div  >
+                    <div className="col-md-6 img-contain ">
+                    
                             <img src={`${imgSource}/${item.filePath}`} className="img-fluid rounded mx-auto d-block" alt="Your Image"></img>
 
-                        </div>
+                       
                     </div>
                     <div className="col-md-6">
                         <h3>{item.name}</h3>
@@ -59,12 +58,9 @@ const ListFoodItem = () => {
     }
     return (
         <>
-            <span> error {error}</span>
-            <button className="btn btn-light" onClick={(e) => deleteAll()}> Delete all</button>
-            <button className="btn btn-dark" onClick={(e)=>dispatch(fetchItems())}> fetch</button>
-
-
-            {display()}
+            <div className="mt-4">
+                {display()}
+            </div>
         </>
     )
 }

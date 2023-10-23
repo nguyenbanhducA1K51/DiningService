@@ -1,7 +1,6 @@
 import { Form, Button, Row, Col, FormGroup, FormLabel, FormControl } from 'react-bootstrap'
 import FormContainer from "../components/FormContainer"
 import { toast } from "react-toastify"
-// import { useCreateFoodItemMutation } from '../slices/foodApiSlice'
 import { useState, useEffect } from 'react'
 import { createItem, selectError} from '../slices/foodItemSlice'
 import { useDispatch,useSelector } from 'react-redux'
@@ -48,7 +47,7 @@ const CreateItemScreen = () => {
     }
     return (
         <div>
-            <span> error: {error}</span>
+    
 
             <FormContainer>
                 <Form onSubmit={handleSubmit}>
@@ -62,10 +61,10 @@ const CreateItemScreen = () => {
                     </Form.Group>
 
                     <Form.Group >
-                        <Form.Label>description </Form.Label>
+                        <Form.Label>Description </Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="description"
+                            placeholder="Description"
                             value={foodDescription}
                             onChange={handleFoodDescriptionChange} />
                     </Form.Group>

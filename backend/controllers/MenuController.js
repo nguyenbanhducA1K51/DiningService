@@ -6,19 +6,23 @@ import { getWeekFromDate } from "../utils/dateUtils"
 
 const getMenu = asyncHandler(async (req, res) => {
 
-    try {
-
         const date = req.query.date
+        if (!date) {
+            res.status(404)
+            throw new Error( "cannot get param date" )
+            
+        }
+        console.log("date from sever",date)
         let menu = {}
-        const weekdays = getWeekFromDate(date)
-        for (let index = 0; index < weekdays.length; index += 1) {
-            const records = await Menu.find({ weekday: weekdays[index] })
+        const dateInWeek = getWeekFromDate(date)
+        for (let index = 0; index < dateInWeek.length; index += 1) {
+            const records = await Menu.find({ date: dateInWeek[index] })
             if (records) {
-                menu[weekdays[index]] = []
+                menu[dateInWeek[index]] = []
                 for (let i = 0; i < records.length; i++) {
                     const foodRecord = await FoodItem.findOne({ _id: records[i].foodItem })
                     if (foodRecord) {
-                        menu[weekdays[index]].push(
+                        menu[dateInWeek[index]].push(
                             foodRecord
                         )
                     }
@@ -29,23 +33,18 @@ const getMenu = asyncHandler(async (req, res) => {
 
         console.log("menu", menu)
         res.status(201).json(menu)
-    } catch (error) {
-        res.status(500)
-        console.log("server error", error)
-        throw new Error(error)
-    }
+    
 })
 
 const postMenu = asyncHandler(async (req, res) => {
 
     try {
-        console.log("body", req.body)
+        // console.log("body", req.body)
         const user = req.user
         if (user.permission != 9) {
             res.status(404).json({ message: "Unothorized operation" })
         }
         const { menu } = req.body
-        console.log("menu post menu", menu)
         const datePattern = /^\d{4}-\d{2}-\d{2}$/;
         for (const key in menu) {
             if (menu.hasOwnProperty(key)) {
@@ -64,7 +63,7 @@ const postMenu = asyncHandler(async (req, res) => {
         // use key in since we are retrieve attribute
         for (const key in menu) {
             if (menu.hasOwnProperty(key)) {
-                const record = await Menu.deleteMany({ weekday: key })
+                const record = await Menu.deleteMany({ date: key })
                 if (record) {
                     deleteRecord[key] = record
                 }
@@ -83,7 +82,7 @@ const postMenu = asyncHandler(async (req, res) => {
                         throw new Error(` Cant find food item with _id ${foodItem._id} `)
                     }
                     const item = await Menu.create({
-                        weekday: key,
+                        date: key,
                         foodItem: objectId
 
                     })
@@ -93,6 +92,7 @@ const postMenu = asyncHandler(async (req, res) => {
                 createRecord[key] = dailyMenu
             }
         }
+        console.log("create record",createRecord,"delete record",deleteRecord)
         res.status(201).json({ createRecord, deleteRecord })
 
     } catch (error) {

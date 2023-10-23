@@ -76,8 +76,7 @@ const registerUser = asyncHandler(async (req, res) => {
 })
 
 const logoutUser = asyncHandler((req, res) => {
-    console.log("log out from browserr")
-    console.log(req)
+
 
     res.cookie('jwt', '', {
         httpOnly: true,

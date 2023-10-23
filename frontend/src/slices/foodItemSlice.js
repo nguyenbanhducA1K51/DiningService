@@ -72,7 +72,10 @@ export const selectStatus = state => state.foodItem.status
 const foodItemSlice = createSlice({
     name: "foodItem",
     initialState,
-    reducer: {
+    reducers: {
+        clearFoodItemError: (state, action) => {
+            state.error = ""
+        },
     },
 
     extraReducers(builder) {
@@ -114,5 +117,5 @@ const foodItemSlice = createSlice({
 
     }
 })
-
+export const {clearFoodItemError}=foodItemSlice.actions
 export default foodItemSlice.reducer

@@ -4,6 +4,8 @@ import path from "path"
 import { createFood,getFood ,delOne,delAll} from '../controllers/FoodController'
 import { protect } from "../middleware/authMiddleware"
 import { postMenu, getMenu } from "../controllers/MenuController"
+import { getRating, postRating } from "../controllers/RatingControlller"
+import { getKeywords,postKeyWords } from "../controllers/KeywordController"
 const router = express.Router()
 const IMG_SAVE = path.join(__dirname, "../../storage/imagestorage")
 
@@ -32,4 +34,12 @@ router.post(`${FOOD_ROUTE}/delall`, delAll)
 const MENU_ROUTE = "/menu"
 router.post(`${MENU_ROUTE}`, postMenu)
 router.get(`${MENU_ROUTE}`, getMenu)
+
+const RATING_ROUTE = "/rating"
+router.get(`${RATING_ROUTE}`, getRating)
+router.post(`${RATING_ROUTE}`, postRating)
+
+const KEYWORD_ROUTE = "/keyword"
+router.get(`${KEYWORD_ROUTE}`,getKeywords)
+router.post(`${KEYWORD_ROUTE}`, postKeyWords)
 export default router 

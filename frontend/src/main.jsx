@@ -8,7 +8,6 @@ import {
   Route,
   RouterProvider
 } from 'react-router-dom'
-import './index.css'
 import HomeScreen from './screens/HomeScreen.jsx'
 import LoginScreen from './screens/LoginScreen.jsx'
 import RegisterScreen from './screens/RegisterScreen.jsx'
