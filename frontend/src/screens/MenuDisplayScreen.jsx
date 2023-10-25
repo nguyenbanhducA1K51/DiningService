@@ -1,20 +1,23 @@
 
-import { useState, useEffect } from "react"
+import { useState, useEffect,useRef } from "react"
 import { toast } from "react-toastify"
 import { useDispatch, useSelector } from "react-redux"
-import {selectUserKeyword, fetchUserKeyword,selectError, selectClientWeekMenu, fetchMenu, fetchRating, fetchKeyword, postKeyword, postRating } from "../slices/clientMenu";
+import {selectClientWeekKeyword,selectAnchor,setAnchorDate,selectUserKeyword, fetchUserKeyword,selectError, selectClientWeekMenu, fetchMenu, fetchRating, fetchKeyword, postKeyword, postRating } from "../slices/clientMenu";
 import { getTodayDate } from "../helper/calculateDay";
 import { Modal } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import { dateToWeekDay } from "../helper/calculateDay";
-import { set } from "mongoose";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+import { format, parse } from 'date-fns'
+import { reduceToFullDate } from "../helper/calculateDay";
 
-const MenuDisplayScreen= () => {
+const MenuDisplayScreen = () => {
+    const weekKeyword= useSelector(selectClientWeekKeyword)
+    const anchorDate=useSelector(selectAnchor)
     const imgSource = "/image/imagestorage/"
     const dispatch = useDispatch()
     const clientMenu = useSelector(selectClientWeekMenu)
-    const [keywords, setKeywords] = useState([])
-    const [inputKeyword, setInputKeyword] = useState("")
     const [error, setError] = useState("")
     const sliceError = useSelector(selectError)
     const [date, setDate] = useState(null)
@@ -24,18 +27,70 @@ const MenuDisplayScreen= () => {
     const [show, setShow] = useState(false);
     const dataUserkeywords = useSelector(selectUserKeyword)
     const [userKeywords,setUsersKeyword]=useState([])
+    const [calendarVisible, setCalendarVisible] = useState(false);
+    const [ dateCalendar,setDateCalendar]=useState(null)
+    const calendarRef = useRef(null);
+    const toggleCalendar = () => {
+        setCalendarVisible(!calendarVisible);
+    };
+
+    const closeCalendar = () => {
+        setCalendarVisible(false);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (calendarRef.current && !calendarRef.current.contains(event.target)) {
+                closeCalendar();
+            }
+        };
+
+        if (calendarVisible) {
+            document.addEventListener('mousedown', handleClickOutside);
+        } else {
+            document.removeEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [calendarVisible]);
+
+    const updateAnchorDate = (calendarDate) => {
+
+        closeCalendar()
+        const formattedDate = format(calendarDate, 'yyyy-MM-dd');
+        
+        dispatch(setAnchorDate({ anchorDate: formattedDate }))
+
+
+    }
+
     const handleCloseFullKeyword = () => {
         setShowFullKeyword(false)
     }
+
     const handleClose = () => setShow(false);
+
     const style = {
         fontFamily: 'Poppins, sans-serif',
         fontSize: '16px',
     };
+
+
     const handleShow = (date) => {
         
         setShow(true)
     };
+    useEffect(() => {
+        if (anchorDate) {
+            console.log(" anchordate change")
+            setDateCalendar(reduceToFullDate(anchorDate))
+            // dispatch(fetchWeekMenu({ date: anchorDate }))
+        }
+
+    }, [anchorDate])
+
     useEffect(() => {
         dispatch(fetchMenu({ date: getTodayDate() }))
         dispatch(fetchKeyword({ anchorDate: getTodayDate() }))
@@ -52,7 +107,6 @@ const MenuDisplayScreen= () => {
    
     const addKeyword = () => {
         const value=document.getElementById("keywordInput").value
-        console.log ("inp",value)
         if (value.length > 15) {
             setError("keyword length must be less than 15 character")
             return
@@ -78,12 +132,7 @@ const MenuDisplayScreen= () => {
             toast.success("updated ! reload to see your keywords")
         }
         
-       
-
-      
-
-       
-
+     
     }
     const removeKeyword = (keyword) => {
         const filter = userKeywords.filter(key => {
@@ -116,9 +165,10 @@ const MenuDisplayScreen= () => {
 
     }
     const renderFoodCard = (day, dailymenu, id, index) => {
-        if (dailymenu[id].item) {
+
+        if (dailymenu && dailymenu[id]) {
             const img_bg = {
-                background: `url(${imgSource}/${dailymenu[id].item.filePath})`,
+                background: `url(${imgSource}/${dailymenu[id].filePath})`,
                 backgroundSize: 'cover', 
                 backgroundRepeat: 'no-repeat',
                 aspectRatio: '1 / 1'
@@ -128,11 +178,11 @@ const MenuDisplayScreen= () => {
                 <div id={index} className="col-md-3 " >
                     <div className="card" style={img_bg}>
                         <div className="card-body d-flex justify-content-between flex-column">
-                            <h5 className="text-center text-card">{dailymenu[id].item.name}</h5>
+                            <h5 className="text-center text-card">{dailymenu[id].name}</h5>
                            
                         </div>
                             <div className="row d-flex justify-content-around">
-                                {dailymenu[id].keywords ? renderKeywords(dailymenu[id].keywords) : null}
+                            {weekKeyword[day]&& weekKeyword[day][id] ? renderKeywords(weekKeyword[day][id]) : null}
                             </div>
                             <div className="m-1">
                                 <img
@@ -145,7 +195,6 @@ const MenuDisplayScreen= () => {
                                         setDate(day)
 
                                         displayRatingAndKeyword( day,id)
-
 
                                     }}
                             />
@@ -262,11 +311,51 @@ const MenuDisplayScreen= () => {
             </>
         )
     }
+
+
+    const CalendarComponent = () => {
+        return (
+            <div className="col d-flex flex-column justify-content-center align-items-center" style={{
+                position: 'relative'
+            }}>
+                <div >
+                    <button onClick={e=>toggleCalendar()} className="btn btn-dark">Show Calendar</button>
+
+                </div>
+                <div>
+
+                    {calendarVisible && (
+                        <div
+                            ref={calendarRef}
+                            style={{
+                                display: "inline-block",
+                                position: 'absolute',
+                                top: '0',
+                                left: '0',
+                                maxWidth: 'unset',
+                                zIndex: 1000,
+                            }}
+                        >
+                            <Calendar
+                                onChange={updateAnchorDate}
+                    
+                                value={dateCalendar}
+                            />
+                        </div>
+                    )}
+                </div>
+
+
+            </div>
+        )
+    }
     return (
         <>
             <RatingAndKeyword />
-
             <FloatFullKeyword />
+            <CalendarComponent />
+            {console.log("week keyword", weekKeyword)}
+            {console.log("client menu", clientMenu)}
         <div className="py-5 " style={style}>
 
             <div className="container">

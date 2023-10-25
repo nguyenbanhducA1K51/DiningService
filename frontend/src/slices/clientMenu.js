@@ -8,6 +8,7 @@ import { getWeekDays } from "../helper/calculateDay";
 const initialState = {
     anchorDate: null,
     weekdata: {},
+    weekKeyword:{},
     error: "",
     userWeekKeyword:{}
 }
@@ -21,6 +22,10 @@ const FETCH_RATING = RATING_API
 const POST_RATING = RATING_API
 const DEFAULT_LOGIN = "api/users/trial"
 const FETCH_KEYWORD_USER = "api/dining/keyword/user"
+
+export const selectAnchor=state=>{
+    return state.clientMenu.anchorDate
+}
 export const selectUserKeyword = state => {
     return state.clientMenu.userWeekKeyword
 }
@@ -29,6 +34,7 @@ export const fetchUserKeyword = createAsyncThunk(
         try {
             const params = data
             const res = await axios.get(FETCH_KEYWORD_USER, { params })
+            console.log("client fetch user keyword", res.data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -42,11 +48,13 @@ export const fetchUserKeyword = createAsyncThunk(
 export const selectClientWeekMenu = state => {
     return state.clientMenu.weekdata
 }
+export const selectClientWeekKeyword = state => {
+    return state.clientMenu.weekKeyword
+}
 export const defaultLogin = state => {
     "clientMenu/defaultLogin", async (data) => {
         try {
             const res=await axios.post( DEFAULT_LOGIN,data)
-            console.log(res)
             return res
         } catch (error) {
             console.log("error from default login",error)
@@ -58,7 +66,7 @@ export const fetchMenu = createAsyncThunk(
         try {
             const params = data
             const res = await axios.get(FETCH_MENU_API, { params })
-
+            console.log("client fetch menu",res.data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -89,6 +97,7 @@ export const fetchKeyword = createAsyncThunk(
         try {
             const params = data
             const res = await axios.get(FETCH_KEYWORD, { params })
+            console.log("client fetch keyword",res.data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -137,7 +146,7 @@ const clientMenuSlice = createSlice({
     initialState,
     reducers: {
         setAnchorDate: (state, action) => {
-            if (!payload) {
+            if (!action.payload) {
                 state.error = "expect payload to be nonempty"
                 return
             }
@@ -150,61 +159,20 @@ const clientMenuSlice = createSlice({
 
 
         },
-        setKeyword: (state, action) => {
-            const dateInWeek = getWeekDays()
-            for (let i = 0; i < dateInWeek.length; i++) {
-                state[dateInWeek[i]] = null
-            }
-        },
-        addKeyword: (state, action) => {
-            const { keyword, date, food_id } = action.payload
-            try {
-
-            } catch (error) {
-                console.log(error)
-                throw error
-            }
-        }
+        
 
     },
     extraReducers(builder) {
         builder
             .addCase(fetchMenu.fulfilled, (state, action) => {
 
-                state.weekdata = {}
-                for (const property in action.payload) {
-                    if (action.payload.hasOwnProperty(property)) {
-
-                        state.weekdata[property] = {}
-                        for (let i = 0; i < action.payload[property].length; i++) {
-                            const _id = action.payload[property][i]._id
-                            state.weekdata[property][_id] = {}
-                            state.weekdata[property][_id].item = action.payload[property][i]
-
-                        }
-                    }
-                }
+                state.weekdata = action.payload
+                
 
             })
             .addCase(fetchKeyword.fulfilled, (state, action) => {
-                for (const property in action.payload) {
-                    if (action.payload.hasOwnProperty(property)) {
-                        const dailyMenu=action.payload[property]
-                        if (!state.weekdata[property]) {
-                            state.weekdata[property]={}
-                        }
-                        for (const foodId in dailyMenu) {
-                            if (dailyMenu.hasOwnProperty(foodId)) {
-                                if (!state.weekdata[property][foodId]) {
-                                    state.weekdata[property][foodId]={}
-                                }
-                                state.weekdata[property][foodId].keywords=dailyMenu[foodId]
-
-                            }
-                        }
-
-                    }
-                }
+                
+                state.weekKeyword=action.payload
                
             })
             .addCase(fetchUserKeyword.fulfilled, (state, action) => {

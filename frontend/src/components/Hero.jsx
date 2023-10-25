@@ -50,8 +50,8 @@ const Hero = () => {
 
                         </div>
                         <div className="d-flex justify-content-between button-div mt-2">
-                            <button className="btn btn-dark" onClick={e=>{trialLogin("admin")}}> Try admin</button>
-                            <button className="btn btn-outline-light" onClick={e=>{trialLogin("user")}}> Try student</button>
+                            <button type= "button" className="btn btn-dark" onClick={e=>{trialLogin("admin")}}> Try admin</button>
+                            <button type="button" className="btn btn-outline-light" onClick={e=>{trialLogin("user")}}> Try student</button>
                         </div>
                     </div>
 

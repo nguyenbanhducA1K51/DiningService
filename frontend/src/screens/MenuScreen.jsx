@@ -16,14 +16,17 @@ const MenuScreen = () => {
     const menu = useSelector(selectWeekMenu)
     const error = useSelector(selectMenuError)
     const anchorDate = useSelector(selectAnchorDate)
-    const weekdate=useSelector(selectWeekDate)
-
+ 
+    const [stateMenu,setStateMenu]=useState({})
     const [date, setDate] = useState(null)
 
     const [calendarVisible, setCalendarVisible] = useState(false);
 
     const calendarRef = useRef(null);
 
+    const [errorMessage,setErrorMessage]=useState("")
+
+    
     const toggleCalendar = () => {
         setCalendarVisible(!calendarVisible);
     };
@@ -57,11 +60,12 @@ const MenuScreen = () => {
         dispatch(fetchItems())
         if (!anchorDate) {
             dispatch(setWeek(getTodayDate()))
-            dispatch(fetchWeekMenu({ date: getTodayDate() }))
+          
         }
 
 
     }, [])
+
     useEffect(() => {
         if (anchorDate) {
             console.log(" anchordate change")
@@ -73,14 +77,55 @@ const MenuScreen = () => {
 
     useEffect(() => {
         if (error) {
-            console.log(error)
+            setErrorMessage(error)
         }
 
     }, [error])
 
+    useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage)
+            setErrorMessage("")
+        }
+    },[errorMessage])
+    useEffect(() => {
+        if (menu) {
+            setStateMenu(JSON.parse(JSON.stringify(menu)))        
+        }
+        
+    },[menu])
+
+    const removeItem = (day, id) => {
+        if (stateMenu[day] && stateMenu[day][id]) {
+            setStateMenu({
+                ...stateMenu,
+                [day]: {
+                    ...stateMenu[day], 
+                    [id]: null
+                },
+            });
+        }
+    }
+    const addItem = (day, foodItem) => {
+        if (stateMenu[day]) {
+            if (stateMenu[day][foodItem._id]) {
+                setErrorMessage("Not allow duplicate dish in a day")
+            
+            }
+            else {
+                setStateMenu({
+                    ...stateMenu,
+                    [day]: {
+                        ...stateMenu[day],
+                        [foodItem._id]:foodItem 
+                    },
+                });
+            }
+        }
+    }
     const updateMenu = () => {
 
-        dispatch(postWeekMenu({ menu: menu }))
+        dispatch(postWeekMenu({ menu: stateMenu }))
         
         if (!error) {
             toast.success("Menu updated")
@@ -104,29 +149,33 @@ const MenuScreen = () => {
             >
                 {foodItem.map((item, index) => (
 
-                    <Dropdown.Item key={index} onClick={e => { dispatch(addFoodAtDate({ date: day, item: item })) }}> {item.name} </Dropdown.Item>
+                    <Dropdown.Item key={index} onClick={e => { addItem(day,item) }}> {item.name} </Dropdown.Item>
                 ))}
 
             </DropdownButton>
         );
     };
 
-    const divMenuItem = (day, item) => {
+    
+    const divMenuItem = (day,dailyMenu, id) => {
        
-       
-        return (
+        if (dailyMenu[id]) {
+            return (
 
-            <div className="container containerStyle "  >
-                <div className="d-flex justify-content-between align-items-center">
-                    <span className="text">{item.name}</span>
-                    <button type="button" className="btn btn-link clickable-x" onClick={e => { dispatch(removeFoodAtDate({ date: day, item: item })) }}>
-                        <FaTimes size={24} className="iconStyle" />
-                    </button>
+                <div className="container containerStyle "  >
+                    <div className="d-flex justify-content-between align-items-center">
+                        <span className="text">{dailyMenu[id].name}</span>
+                        <button type="button" className="btn btn-link clickable-x" >
+                            <FaTimes size={24} className="iconStyle" onClick={e=>{removeItem(day,id)}}/>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }     
+        
     }
-
+       
+  
     return (
         <>
             <div className="row" style={{
@@ -134,7 +183,7 @@ const MenuScreen = () => {
             }}>
                 <div className="col d-flex flex-column justify-content-center align-items-center">
                     <div >
-                    <button onClick={toggleCalendar} className="btn btn-dark">Show Calendar</button>
+                    <button type="button" onClick={toggleCalendar} className="btn btn-dark">Show Calendar</button>
 
                     </div>
                     <div>
@@ -163,31 +212,33 @@ const MenuScreen = () => {
                 </div>
            
                 
+
+
+                <div className=" col d-flex justify-content-center align-items-center"> <button type="button" className="btn btn-outline-dark m-3" onClick={e => { updateMenu() }}>Update menu</button></div>
+            </div>
             
 
-                <div className=" col d-flex justify-content-center align-items-center"> <button className="btn btn-outline-dark m-3" onClick={e => { updateMenu() }}>Update menu</button></div>
-            </div>
+            {   Object.keys(stateMenu).map((day,index) => (
+                <div id={index} className=" d-flex " >
+                  
+                        <div className="row flex-fill">
 
-            {weekdate.map((day) => (
-                <div className="card" >
-                    <div className="card-body">
-                        <div className="row">
-
-                            <div className="col" >
-                                <h5 className="card-title">{day} </h5>
+                            <div className="col-md-2 " >
+                            <span className=""> {day} </span> 
                                 {DropdownItem(day)}
                             </div>
                             <div className="col d-flex justify-content-around justify-content-center align-items-center ">
-                                {menu[day] ? menu[day].map((item, index) => (
+                            {Object.keys(stateMenu[day]).map((id, subindex) => (
 
-                                    <div className="col-md-4 " key={index}> {divMenuItem(day, item)}</div>
+                                <div className="col-md-2 " key={subindex}> {divMenuItem(day, stateMenu[day],id)}</div>
 
-                                )) : <></>}
+                                )) }
 
                             </div>
                         </div>
-                    </div>
-
+                       
+                        
+                    
                 </div>
 
             ))}

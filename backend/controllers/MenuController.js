@@ -15,15 +15,14 @@ const getMenu = asyncHandler(async (req, res) => {
     let menu = {}
     const dateInWeek = getWeekFromDate(date)
     for (let index = 0; index < dateInWeek.length; index += 1) {
+
         const records = await dailyFood.find({ date: dateInWeek[index] })
         if (records) {
-            menu[dateInWeek[index]] = []
+            menu[dateInWeek[index]] = {}
             for (let i = 0; i < records.length; i++) {
                 const foodRecord = await Food.findOne({ _id: records[i].foodId })
                 if (foodRecord) {
-                    menu[dateInWeek[index]].push(
-                        foodRecord
-                    )
+                    menu[dateInWeek[index]][foodRecord._id]=foodRecord
                 }
 
             }
@@ -42,6 +41,7 @@ const postMenu = asyncHandler(async (req, res) => {
             res.status(404).json({ message: "Unothorized operation" })
         }
         const { menu } = req.body
+        console.log("post menu",req.body)
         const datePattern = /^\d{4}-\d{2}-\d{2}$/;
         for (const key in menu) {
             if (menu.hasOwnProperty(key)) {
@@ -55,33 +55,30 @@ const postMenu = asyncHandler(async (req, res) => {
         let deleteRecord = {}
         for (const key in menu) {
             if (menu.hasOwnProperty(key)) {
+                createRecord[key] = []
                 const record = await dailyFood.deleteMany({ date: key })
                 if (record) {
                     deleteRecord[key] = record
                 }
-                let daily = []
+                let daily = {}
 
-                for (let i = 0; i < menu[key].length; i++) {
-                    const foodItem = menu[key][i]
-                    if (!foodItem._id) {
-                        res.status(404)
-                        throw new Error(" Data food Item does not have _id attribute")
+                for (const foodId in menu[key]) {
+                    if (menu[key].hasOwnProperty(foodId)) {
+                        const objectId = new mongoose.Types.ObjectId(foodId);
+                        const existItem = await Food.find({ _id: objectId })
+                        if (!existItem) {
+                            res.status(404)
+                            throw new Error(` Cant find food item with _id ${foodItem._id} `)
+                        }
+                        const dailyRecord = await dailyFood.create({
+                            date: key,
+                            foodId: objectId
+
+                        })
+
+                        createRecord[key].push(dailyRecord)
                     }
-                    const objectId = new mongoose.Types.ObjectId(foodItem._id);
-                    const existItem = await Food.find({ _id: objectId })
-                    if (!existItem) {
-                        res.status(404)
-                        throw new Error(` Cant find food item with _id ${foodItem._id} `)
-                    }
-                    const item = await dailyFood.create({
-                        date: key,
-                        foodId: objectId
-
-                    })
-                    daily.push(item)
-
                 }
-                createRecord[key] = daily
             }
         }
         console.log("create record", createRecord, "delete record", deleteRecord)
@@ -89,7 +86,7 @@ const postMenu = asyncHandler(async (req, res) => {
 
     } catch (error) {
         console.log("error from server", error)
-        res.status(404)
+        res.status(500)
         throw new Error(error)
     }
 
