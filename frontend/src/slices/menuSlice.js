@@ -9,9 +9,9 @@ const initialState = {
     weekDates: []
 
 }
-const MENU_API = "api/dining/menu"
+const MENU_API = "api/dining/dailyFood"
 export const fetchWeekMenu = createAsyncThunk(
-    'menu/fetchWeekMenu', async (data) => {
+    'dailyFood/fetchWeekMenu', async (data) => {
         try {
             const params = data
             const res = await axios.get(MENU_API, { params })
@@ -20,7 +20,7 @@ export const fetchWeekMenu = createAsyncThunk(
         } catch (error) {
 
             console.log("error", error.response.data.message)
-            if (!error.response ) {
+            if (!error.response) {
                 throw error
             }
             return rejectWithValue(err.response)
@@ -28,7 +28,7 @@ export const fetchWeekMenu = createAsyncThunk(
     }
 )
 export const postWeekMenu = createAsyncThunk(
-    'menu/postWeekMenu', async (data, { rejectWithValue }) => {
+    'dailyFood/postWeekMenu', async (data, { rejectWithValue }) => {
         try {
             const res = await axios.post(MENU_API, data)
             return res.data
@@ -42,21 +42,21 @@ export const postWeekMenu = createAsyncThunk(
     }
 )
 export const selectWeekMenu = state => {
-    return state.menu.weekmenu
+    return state.dailyFood.weekmenu
 }
 export const selectMenuError = state => {
-    return state.menu.error
+    return state.dailyFood.error
 }
 export const selectWeekDate = state => {
-    return state.menu.weekDates
+    return state.dailyFood.weekDates
 }
 export const selectAnchorDate = state => {
-    return state.menu.anchorDate
+    return state.dailyFood.anchorDate
 }
 
 const menuSlice = createSlice({
 
-    name: "menu",
+    name: "dailyFood",
     initialState,
     reducers: {
         clearMenuError: (state, action) => {
@@ -78,13 +78,13 @@ const menuSlice = createSlice({
             }
             state.weekDates = []
             state.weekmenu = {}
-            state.anchorDate=anchorDate
-            
+            state.anchorDate = anchorDate
+
             getWeekDays(anchorDate).map(day => {
                 state.weekmenu[day] = []
                 state.weekDates.push(day)
             })
-            
+
         },
         addFoodAtDate: (state, action) => {
             const { date, item } = action.payload
@@ -96,7 +96,7 @@ const menuSlice = createSlice({
             const daymenu = state.weekmenu[date]
             for (let i = 0; i < daymenu.length; i++) {
                 if (daymenu[i].name === item.name) {
-                    state.error = `item ${item.name} already in menu`
+                    state.error = `item ${item.name} already in dailyFood`
                     return
                 }
             }
@@ -123,7 +123,7 @@ const menuSlice = createSlice({
                 }
             }
             if (idx == -1) {
-                state.error = " Cant find item in the menu"
+                state.error = " Cant find item in the dailyFood"
                 return
             }
             daymenu.splice(idx, 1)

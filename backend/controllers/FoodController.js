@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler"
-import { FoodItem } from "../models/foodModel"
+import { Food } from "../models/foodModel"
 import mongoose from "mongoose"
 import path from "path"
 const fs = require('fs');
@@ -8,7 +8,7 @@ console.log(STORAGE_PATH)
 console.log(fs.existsSync(STORAGE_PATH))
 const getFood = asyncHandler(async (req, res) => {
   try {
-    const returnDocuments = await FoodItem.find({}).exec()
+    const returnDocuments = await Food.find({}).exec()
     console.log("return documents", returnDocuments.length)
     return res.status(201).json(returnDocuments)
   } catch (error) {
@@ -26,7 +26,7 @@ const delAll = asyncHandler(async (req, res) => {
   if (user.permission != 9) {
     req.send(404).json({ message: "Unathorized for this operation" })
   }
-  const result = await FoodItem.deleteMany({});
+  const result = await Food.deleteMany({});
   for (record in result) {
     const imagePath = path.join(STORAGE_PATH, "imagestorage", record.filePath)
     console.log("Find image file ", fs.existsSync(imagePath))
@@ -57,7 +57,7 @@ const delOne = asyncHandler(async (req, res) => {
 
   }
   const object_id = new mongoose.Types.ObjectId(food_id);
-  const deletedRecord = await FoodItem.findOneAndRemove({ _id: object_id });
+  const deletedRecord = await Food.findOneAndRemove({ _id: object_id });
   if (deletedRecord) {
     console.log("delete record", deletedRecord)
     const imagePath = path.join(STORAGE_PATH, "imagestorage", deletedRecord.filePath)
@@ -81,6 +81,7 @@ const delOne = asyncHandler(async (req, res) => {
 
 })
 const createFood = asyncHandler(async (req, res) => {
+  console.log("go from server")
   const user = req.user
   if (user.permission != 9) {
     req.send(404).json({ message: "Unathorized for this operation" })
@@ -92,19 +93,20 @@ const createFood = asyncHandler(async (req, res) => {
       throw new Error("Missing either name, description or file")
 
     }
-    const foodExist = await FoodItem.findOne({ name })
+    const foodExist = await Food.findOne({ name })
 
     if (foodExist) {
       res.status(400)
       throw new Error("dish exist")
     }
 
-    const item = await FoodItem.create({
+    const item = await Food.create({
       name,
       description,
       filePath
 
     })
+    console.log(item )
     res.status(201).json({ "_id": item._id })
   } catch (error) {
     res.status(400)

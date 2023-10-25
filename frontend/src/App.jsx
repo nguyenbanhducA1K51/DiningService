@@ -5,14 +5,23 @@ import { Outlet } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import "./style.css"
+import { useSelector, useDispatch } from 'react-redux'
+
+
+
 const App = () => {
+  const dispatch = useDispatch()
+  const { userInfo } = useSelector((state) => state.auth)
+  const background= userInfo? "" : "black-bg"
   return (
     <>
+      <div className={background}>   
       <ToastContainer />
       <Header /> 
-      <Container>
+      <Container >
         <Outlet />        
-      </Container>
+        </Container>
+      </div>
 
     </>
   )

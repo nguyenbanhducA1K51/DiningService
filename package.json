@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\" ",
+    "dev": "concurrently  \"npm run server\" \"npm run client\"  ",
     "start": "node backend/server.js",
     "server": "nodemon --exec babel-node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -32,6 +32,7 @@
     "@babel/node": "^7.22.19",
     "@babel/preset-env": "^7.23.2",
     "concurrently": "^8.2.1",
+    "kill-port": "^2.0.1",
     "nodemon": "^3.0.1"
   }
 }

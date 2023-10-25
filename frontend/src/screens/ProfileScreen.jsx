@@ -90,7 +90,7 @@ const ProfileScreen = () => {
 
                     <FormLabel> confirm Password</FormLabel>
                     <FormControl type="password"
-                        placeholder='confirm password'
+                        placeholder='Confirm password'
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}>
 

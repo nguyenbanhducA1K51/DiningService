@@ -7,11 +7,11 @@ import { notFound, errorHandler } from './backend/middleware/errorMiddleware.js'
 import connectDB from "./backend/config/db.js";
 import diningRoute from "./backend/routes/diningRoute.js"
 import path from "path"
+const process = require('process');
 dotenv.config()
 const port = process.env.PORT || 5000;
 const app = express();
-// import  cors from "cors";
-// app.use(cors());
+
 
 connectDB()
 app.use(express.json())
@@ -27,6 +27,6 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler)
 
-app.listen(port, () => {
+ app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });

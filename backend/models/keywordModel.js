@@ -2,14 +2,14 @@ import mongoose from "mongoose"
 const keywordSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
-        ref:"User"
+        ref: "User"
     },
     keywords: {
-        type:Array
+        type: Array
     },
-    food: {
+    dailyFoodId: {
         type: mongoose.Schema.ObjectId,
-        ref:"Menu"
+        ref: "dailyFood"
     }
 })
-export const Keyword=mongoose.model("Keyword",keywordSchema)
+export const Keyword = mongoose.model("Keyword", keywordSchema)

@@ -7,13 +7,13 @@ import { useLoginMutation } from '../slices/userApiSlice'
 import { setCredentials } from '../slices/authSlices'
 import { toast } from "react-toastify"
 import Loader from "../components/Loader"
-
+import { FaTimes } from 'react-icons/fa';
 const LoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const [login, { isLoading,error }] = useLoginMutation()
+    const [login, { isLoading }] = useLoginMutation()
     const  {userInfo}=useSelector( (state)=>state.auth )
 
     useEffect(() => {
@@ -26,9 +26,7 @@ const LoginScreen = () => {
         e.preventDefault()
         try {
             const res = await login({ email, password }).unwrap()
-            console.log(res.data)
-            console.log(res)
-            
+     
             dispatch(setCredentials({ ...res }))
             navigate('/')
         } catch (err) {
@@ -38,6 +36,9 @@ const LoginScreen = () => {
     }
     return (
         <FormContainer >
+            <div className='d-flex justify-content-end' >
+                <FaTimes size={24} className="iconStyle" onClick={e=> {navigate("/")}} />
+</div>
             <h1>Sign in</h1>
 
             <Form onSubmit={submitHandler} >

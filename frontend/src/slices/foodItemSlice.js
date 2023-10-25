@@ -13,6 +13,7 @@ const DELETE_ALL=`${FOOD_API}/delall`
 export const fetchItems = createAsyncThunk(
     'foodItem/fetchItems', async () => {
         const res = await axios.get(FETCH_ITEM)
+    
         return res.data
     }
 )
@@ -21,14 +22,13 @@ export const createItem = createAsyncThunk(
     'foodItem/createItem', async (data, { rejectWithValue }) => {
         try {
             const res = await axios.post(CREATE_ITEM, data)
-            console.log("res from slice", res.data)
-            return res.data
         } catch (error) {
+            console.log(error)
             if (!err.response) {
                 throw err
             }
 
-            return rejectWithValue(err.response.data)
+            state.error=error
         }
 
     }
@@ -80,9 +80,6 @@ const foodItemSlice = createSlice({
 
     extraReducers(builder) {
         builder
-            .addCase(fetchItems.pending, (state, action) => {
-                state.status = "loading"
-            })
             .addCase(fetchItems.fulfilled, (state, action) => {
                 state.status = 'succeeded'
                 state.foodList = action.payload

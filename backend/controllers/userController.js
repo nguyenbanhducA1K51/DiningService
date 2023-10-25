@@ -1,6 +1,37 @@
 import asyncHandler from "express-async-handler"
 import User from '../models/userModel.js'
 import generateToken from '../utils/generateToken.js'
+
+const defaultUser = asyncHandler(async(req, res)=> {
+    const { role } = req.body
+    console.log(req.body,role)
+    if (role != "admin" && role != "user") {
+        return res.status(500).json({message: "Role can only be admin or user "})
+    }
+    if (role == "admin") {
+        const adminUser = await User.findOne({ email: "ad@gmail.com" })
+       console.log("admin",adminUser)
+        generateToken(res, adminUser._id)
+        return res.status(201).json({
+            _id: adminUser._id,
+            
+            name: adminUser.name,
+            email: adminUser.email,
+            permission:adminUser.permission
+        })
+    }
+    else {
+        const user = await User.findOne({ email:"A@gmail.com"})
+            console.log("user",user)
+            generateToken(res, user._id)
+            res.status(201).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                permission: user.permission
+            })
+    }
+})
 const authUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
     const user = await User.findOne({ email })
@@ -127,6 +158,7 @@ export {
     registerUser,
     logoutUser,
     getUserProfile,
-    updateUserProfile
+    updateUserProfile,
+    defaultUser
 }
 

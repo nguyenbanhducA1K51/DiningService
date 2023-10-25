@@ -15,7 +15,7 @@ import ProfileScreen from './screens/ProfileScreen.jsx'
 import store from './store'
 import { Provider } from 'react-redux'
 import PrivateRoute from './components/PrivateRoute.jsx'
-
+import "./style.css"
 import AdminScreen from './screens/AdminScreen.jsx'
 const router = createBrowserRouter(
   createRoutesFromElements(

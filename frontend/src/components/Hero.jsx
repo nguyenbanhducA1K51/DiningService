@@ -1,95 +1,69 @@
-import { Container, Card, Button } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
-import { useState, useEffect } from "react"
+import MenuDisplayScreen from "../screens/MenuDisplayScreen";
+import { useSelector, useDispatch } from 'react-redux'
+import { defaultLogin } from "../slices/clientMenu";
+import { useDefaultMutation } from "../slices/userApiSlice";
+import { setCredentials } from "../slices/authSlices";
 import { toast } from "react-toastify"
-import { useDispatch, useSelector } from "react-redux"
-import { fetchMenu,fetchRating,fetchKeyword,postKeyWord,postRating } from "../slices/clientMenu";
-import { getTodayDate } from "../helper/calculateDay";
-import { Modal} from 'react-bootstrap';
 const Hero = () => {
-    const imgSource = "/image/imagestorage/"
     const dispatch = useDispatch()
-    const menu = useSelector(selectWeekMenu)
-    const weekDates = useSelector(selectWeekDate)
-    const anchorDate=useSelector(selectAnchorDate)
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    useEffect(() => {
-        console.log("dispatch from hero")
-        if (!anchorDate) {
-            dispatch(setWeek({ anchorDate:getTodayDate() }))
-            dispatch(fetchWeekMenu({ date: getTodayDate() }))
+    const [defaultLogin,{isLoading}]= useDefaultMutation()
+    const { userInfo } = useSelector((state) => state.auth)
+    const trialLogin = async (role) => {
+        try {
+            const res = await defaultLogin({ role }).unwrap()
+            dispatch(setCredentials({...res}))
+        } catch (err) {
+            console.log("error".err)
+            toast.error(err?.data?.message || err.error)
+        
         }
-    }, [])
 
-    const dailyMenu = (day, dailymenu) => {
+    }
 
-
+    const landing = () => {
         return (
-
             <>
-                <span> {day}</span>
-                <div className="row">
-                    {dailymenu.map((dish, index) => (
+                <div>
+                    <div className="d-flex flex-column white-text p-4">
 
-                        <div id={index} className="col-md-2">
+                        <h2 className="head1">
 
-                            <div class="card " >
-                                <div class="card-body">
-                                    <h5 class="card-title text-center">{dish.name}</h5>
-                                    <div className="img-contain">
-                                        <img onCLick={handleShow} src={`${imgSource}/${dish.filePath}`} className="img-fluid rounded mx-auto d-block " alt="Your Image"></img>
-                                        </div>
-                                   
-                                    <div>
-                                        <div>
-                                            <img src="/src/images/yummy.png" className="rounded-image" alt="" />
-                                        </div>
-                                    </div>
-                                </div>
+                            Dining service rating
+                        </h2>
+                        <div className="  describe-text d-flex flex-column">
+                            <div>
+
+                                <span >  Prototype web-application  provides students
+                                    information of weekly menu.</span>
                             </div>
+                            <br ></br>
+                            <div>
 
+                                <span>Allow rating food quality by score and keywords.</span>
+                            </div>
+                            <br></br>
+                            <div>
+
+                                <span>  Admin page to manage dining weekly schedule.</span>
+                            </div>
 
 
                         </div>
-                    ))}
-                </div></>
+                        <div className="d-flex justify-content-between button-div mt-2">
+                            <button className="btn btn-dark" onClick={e=>{trialLogin("admin")}}> Try admin</button>
+                            <button className="btn btn-outline-light" onClick={e=>{trialLogin("user")}}> Try student</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </>
         )
     }
     return (
-
-        <div className="py-5">
-            <div className="container">
-                <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Floating Div</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>This is a floating div.</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                            Close
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-                <div className="menu">
-                    {
-                        weekDates.map((day, index) => (
-                            <div id={index} className="mt-3">
-                                {dailyMenu(day, menu[day])}
-                            </div>
-
-                        ))
-                    }
-                </div>
-            </div>
-
-
-        </div>
+        <>
+            {userInfo ?  <> <MenuDisplayScreen/> </>:landing()}
+            </>
     )
 }
-
 export default Hero

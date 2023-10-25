@@ -67,4 +67,16 @@ export const getWeekDays = (inputDate = null) => {
 
 }
 
+export const dateToWeekDay=(dateString)=> {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const date = new Date(dateString.replace(/-/g, '/'));
+
+    // Use getDay() to get the day of the week as a number (0 = Sunday, 1 = Monday, etc.)
+    const dayIndex = date.getDay();
+
+    // Use the day index to get the corresponding day name
+    const dayName = daysOfWeek[dayIndex];
+
+    return dayName;
+}
 

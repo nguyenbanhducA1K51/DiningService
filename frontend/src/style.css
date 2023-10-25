@@ -1,5 +1,34 @@
 /* style for image in admin page */
+.black-bg {
 
+    background-image: url('/src/images/wallpaper.png');
+    background-size: cover; 
+    background-position: center; 
+    width: 100vw;
+    height: 100vh; 
+}
+
+.white-text {
+    color:#FFFFFFC0;
+    font-size:15px;
+    
+}
+.head1{
+    font-size: 40px;
+}
+.describe-text {
+color: #FFFFFFC0;
+    max-width: 40vw;
+    word-wrap: break-word;
+
+}
+.describe-text div {
+    margin-top: 1px;
+}
+
+.button-div{
+    max-width: 50vh;
+}
 .image-container {
     position: relative;
     display: inline-block;
@@ -71,7 +100,7 @@
 }
 
 .rounded-image {
-    max-width: 20%;
+    max-width: 10%;
     border-radius: 20%;
     cursor:pointer;
     transition: transform 0.2s ease-in-out;
@@ -100,4 +129,43 @@
     height: 100%;
     object-fit: cover;
     /* Maintain aspect ratio and crop if necessary */
+}
+
+
+.iconStyle {
+     color: black
+ }
+
+
+
+ .containerStyle{
+     border: 1px solid #dddddd;
+    border-radius: 10px 
+ }
+
+.tight-div {
+        padding: 3;
+        border: 1px solid #333;
+        /* font-family: Arial, sans-serif; */
+        font-size: 16px;
+        color: #333;
+        text-align: center;
+        width: fit-content;
+        margin: 10px auto;
+}
+.inner-span {
+    display: inline;
+    margin:0
+}
+
+.text-card{
+    color: #FFFFFFC0;
+    font-size :2em;
+    font-weight:400
+
+}
+
+.text-keyword{
+    font-size:0.7em;
+    font-weight:100
 }

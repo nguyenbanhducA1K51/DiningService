@@ -8,21 +8,27 @@ import { getWeekDays } from "../helper/calculateDay";
 const initialState = {
     anchorDate: null,
     weekdata: {},
-    error: ""
+    error: "",
+    userWeekKeyword:{}
 }
 
-const FETCH_MENU_API = "api/dining/menu"
+const FETCH_MENU_API = "api/dining/dailyFood"
 const KEYWORD_API = "api/dining/keyword"
 const RATING_API = "api/dining/rating"
 const FETCH_KEYWORD = KEYWORD_API
 const POST_KEYWORD = KEYWORD_API
 const FETCH_RATING = RATING_API
 const POST_RATING = RATING_API
-export const fetchMenu = createAsycnThunk(
-    "client/fetchMenu", async (data) => {
+const DEFAULT_LOGIN = "api/users/trial"
+const FETCH_KEYWORD_USER = "api/dining/keyword/user"
+export const selectUserKeyword = state => {
+    return state.clientMenu.userWeekKeyword
+}
+export const fetchUserKeyword = createAsyncThunk(
+    "clientMenu/fetchUserKeyword", async (data) => {
         try {
             const params = data
-            const res = await axios.get(FETCH_MENU_API, { params })
+            const res = await axios.get(FETCH_KEYWORD_USER, { params })
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -33,8 +39,38 @@ export const fetchMenu = createAsycnThunk(
         }
     }
 )
+export const selectClientWeekMenu = state => {
+    return state.clientMenu.weekdata
+}
+export const defaultLogin = state => {
+    "clientMenu/defaultLogin", async (data) => {
+        try {
+            const res=await axios.post( DEFAULT_LOGIN,data)
+            console.log(res)
+            return res
+        } catch (error) {
+            console.log("error from default login",error)
+        }
+    }
+}
+export const fetchMenu = createAsyncThunk(
+    "clientMenu/fetchMenu", async (data) => {
+        try {
+            const params = data
+            const res = await axios.get(FETCH_MENU_API, { params })
+
+            return res.data
+        } catch (error) {
+            if (!error.response) {
+                throw error
+            }
+            console.log("full error", error)
+            state.error = error.response.data.message
+        }
+    }
+)
 export const fetchRating = createAsyncThunk(
-    "client/fetchRating", async (data) => {
+    "clientMenu/fetchRating", async (data) => {
         try {
             const params = data
             const res = await axios.get(FETCH_RATING, { params })
@@ -49,24 +85,10 @@ export const fetchRating = createAsyncThunk(
     }
 )
 export const fetchKeyword = createAsyncThunk(
-    "client/fetchKeyword", async (data) => {
+    "clientMenu/fetchKeyword", async (data) => {
         try {
             const params = data
             const res = await axios.get(FETCH_KEYWORD, { params })
-            return res.data 
-        } catch (error) {
-            if (!error.response) {
-                throw error
-            }
-            console.log("error", error.response.data.message)
-            state.error = error.response.data.message
-        }
-    }
-)
-export const postKeyword = createAsyncThunk(
-    "client/postKeyword", async (data) => {
-        try {
-            const res = await axios.post(POST_KEYWORD, data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -77,8 +99,23 @@ export const postKeyword = createAsyncThunk(
         }
     }
 )
+export const postKeyword = createAsyncThunk(
+    "clientMenu/postKeyword", async (data) => {
+        try {
+            const res = await axios.post(POST_KEYWORD, data)
+            return res.data
+        } catch (error) {
+            if (!error.response) {
+                throw error
+            }
+
+            console.log("error", error.response.data.message)
+            state.error = error.response.data.message
+        }
+    }
+)
 export const postRating = createAsyncThunk(
-    "client/postRating", async (data) => {
+    "clientMenu/postRating", async (data) => {
         try {
             const res = await axios.post(POST_RATING, data)
             return res.data
@@ -91,10 +128,12 @@ export const postRating = createAsyncThunk(
         }
     }
 )
+export const selectError = state => {
+    return state.clientMenu.error
+}
 
-
-const keywordSlice = createSlice({
-    name: "keyword",
+const clientMenuSlice = createSlice({
+    name: "clientMenu",
     initialState,
     reducers: {
         setAnchorDate: (state, action) => {
@@ -103,9 +142,14 @@ const keywordSlice = createSlice({
                 return
             }
             const { anchorDate } = action.payload;
-                
-            
-        } ,
+            if (!anchorDate) {
+                anchorDate = new Date().toISOString().slice(0, 10)
+            }
+            console.log("anchor", anchorDate)
+            state.anchorDate = anchorDate
+
+
+        },
         setKeyword: (state, action) => {
             const dateInWeek = getWeekDays()
             for (let i = 0; i < dateInWeek.length; i++) {
@@ -124,24 +168,52 @@ const keywordSlice = createSlice({
 
     },
     extraReducers(builder) {
-        builder 
-            .addCase(fetchKeyword.fulfilled, (state,action)=> {
-            
+        builder
+            .addCase(fetchMenu.fulfilled, (state, action) => {
+
                 state.weekdata = {}
                 for (const property in action.payload) {
-                    state.weekdata[property] = {}
-                    for (let i = 0; i < action.payload.property.length; i++){
-                        
-                        const _id = action.payload.property[i]._id 
-                        state.weekdata[property][_id] = {}
-                        state.weekdata[property][id].item=action.payload.property[i]
+                    if (action.payload.hasOwnProperty(property)) {
+
+                        state.weekdata[property] = {}
+                        for (let i = 0; i < action.payload[property].length; i++) {
+                            const _id = action.payload[property][i]._id
+                            state.weekdata[property][_id] = {}
+                            state.weekdata[property][_id].item = action.payload[property][i]
+
+                        }
+                    }
+                }
+
+            })
+            .addCase(fetchKeyword.fulfilled, (state, action) => {
+                for (const property in action.payload) {
+                    if (action.payload.hasOwnProperty(property)) {
+                        const dailyMenu=action.payload[property]
+                        if (!state.weekdata[property]) {
+                            state.weekdata[property]={}
+                        }
+                        for (const foodId in dailyMenu) {
+                            if (dailyMenu.hasOwnProperty(foodId)) {
+                                if (!state.weekdata[property][foodId]) {
+                                    state.weekdata[property][foodId]={}
+                                }
+                                state.weekdata[property][foodId].keywords=dailyMenu[foodId]
+
+                            }
+                        }
 
                     }
                 }
-                console.log("weekmenu", state.weekdata)
-        })
+               
+            })
+            .addCase(fetchUserKeyword.fulfilled, (state, action) => {
+               state.userWeekKeyword=action.payload
+
+            })
     }
 
 
 })
-export const { setDefaultKeyword } = keywordSlice.actions
+export const { setAnchorDate, setKeyword, addKeyword } = clientMenuSlice.actions
+export default clientMenuSlice.reducer

@@ -92,7 +92,6 @@ const MenuScreen = () => {
 
         closeCalendar()
         const formattedDate = format(date, 'yyyy-MM-dd');
-
         dispatch(setWeek({ anchorDate: formattedDate }))
        
        
@@ -113,21 +112,15 @@ const MenuScreen = () => {
     };
 
     const divMenuItem = (day, item) => {
-        const iconStyle = {
-            color: 'black',
-        };
-
-        const containerStyle = {
-            border: '1px solid #dddddd', // Light grey border
-            borderRadius: '10px', // Rounded corners
-        };
+       
+       
         return (
 
-            <div className="container " style={containerStyle} >
+            <div className="container containerStyle "  >
                 <div className="d-flex justify-content-between align-items-center">
                     <span className="text">{item.name}</span>
                     <button type="button" className="btn btn-link clickable-x" onClick={e => { dispatch(removeFoodAtDate({ date: day, item: item })) }}>
-                        <FaTimes size={24} style={iconStyle} />
+                        <FaTimes size={24} className="iconStyle" />
                     </button>
                 </div>
             </div>
@@ -173,7 +166,7 @@ const MenuScreen = () => {
             
 
                 <div className=" col d-flex justify-content-center align-items-center"> <button className="btn btn-outline-dark m-3" onClick={e => { updateMenu() }}>Update menu</button></div>
-        </div>
+            </div>
 
             {weekdate.map((day) => (
                 <div className="card" >

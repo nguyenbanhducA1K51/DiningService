@@ -4,6 +4,7 @@ const initialState = {
     userInfo: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')) : null
 
 }
+const DEFAULT_LOGIN = "api/users/trial"
 const authSlice = createSlice({
     name: 'auth',
     initialState,

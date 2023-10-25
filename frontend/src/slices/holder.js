@@ -1,7 +1,7 @@
 import { apiSlice } from './apiSlice'
 
 const FOOD_URL = "/api/dining/food"
-const MENU_URL="api/dining/menu"
+const MENU_URL = "api/dining/dailyFood"
 // const USERS_URL = "/api/users"
 export const foodAPISlice = apiSlice.injectEndpoints({
 
@@ -16,8 +16,8 @@ export const foodAPISlice = apiSlice.injectEndpoints({
         getFoodItem: builder.mutation({
             query: (data) => ({
                 url: `${FOOD_URL}/all`,
-                 method: "GET"
-                        
+                method: "GET"
+
             })
         }),
         delFoodSingle: builder.mutation({
@@ -25,20 +25,20 @@ export const foodAPISlice = apiSlice.injectEndpoints({
                 url: `${FOOD_URL}/delone`,
                 method: "POST",
                 body: data
-                
+
             })
         }),
         delFoodAll: builder.mutation({
-            
-            query:(data)=> ({
+
+            query: (data) => ({
                 url: `${FOOD_URL}/delall`,
                 method: "POST"
-            
+
             })
         }),
 
-        
+
     })
 
 })
-export const { useCreateFoodItemMutation,useGetFoodItemMutation,useDelFoodSingleMutation,useDelFoodAllMutation}=foodAPISlice
+export const { useCreateFoodItemMutation, useGetFoodItemMutation, useDelFoodSingleMutation, useDelFoodAllMutation } = foodAPISlice

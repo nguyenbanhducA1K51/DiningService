@@ -28,7 +28,7 @@ const Header = () => {
         if (userInfo.permission == 9) {
             return true
         }
-        return False
+        return false
     }
     return (
         <header>
@@ -47,7 +47,7 @@ const Header = () => {
                             {userInfo ? (<>
 
                                 <NavDropdown title={userInfo.name} id='username'>
-                                    {userInfo.permission != 9 ?
+                                    {userInfo.permission != 9 && userInfo.email!="A@gmail.com" ?
                                         <>
                                             <LinkContainer to="/profile">
                                         <NavDropdown.Item>

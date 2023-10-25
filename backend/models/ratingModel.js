@@ -1,17 +1,17 @@
 import mongoose from "mongoose";
 const ratingSchema = mongoose.Schema({
-    
+
     food: {
         type: mongoose.Schema.ObjectId,
-        ref:"Menu"
+        ref: "dailyFood"
     },
     user: {
         type: mongoose.Schema.ObjectId,
-        ref:"User"
+        ref: "User"
     },
     rating: {
-        type:Number
+        type: Number
     }
 
 })
-export const Rating =mongoose.model("Rating",ratingSchema)
+export const Rating = mongoose.model("Rating", ratingSchema)

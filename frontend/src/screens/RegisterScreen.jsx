@@ -5,9 +5,8 @@ import FormContainer from '../components/FormContainer'
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-
+import { FaTimes } from 'react-icons/fa';
 import { ToastContainer,toast } from "react-toastify"
-import Loader from "../components/Loader"
 import { useRegisterMutation } from '../slices/userApiSlice'
 import { setCredentials } from '../slices/authSlices'
 const RegisterScreen = () => {
@@ -50,6 +49,9 @@ const RegisterScreen = () => {
     }
     return (
         <FormContainer >
+            <div className='d-flex justify-content-end' >
+                <FaTimes size={24} className="iconStyle" onClick={e => { navigate("/") }} />
+            </div>
             <h1>Sign up</h1>
 
             <Form onSubmit={submitHandler} >
