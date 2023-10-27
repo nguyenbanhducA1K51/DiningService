@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const ratingSchema = mongoose.Schema({
 
-    food: {
+    dailyFoodId: {
         type: mongoose.Schema.ObjectId,
         ref: "dailyFood"
     },

@@ -27,10 +27,10 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
 
                     let keywords = []
                     for (let k = 0; k < keywordRecords.length; k++) {
-                        console.log("keywordrec", keywordRecords[k])
-                        console.log("add keyword", keywordRecords[k].keywords)
+                        // console.log("keywordrec", keywordRecords[k])
+                        // console.log("add keyword", keywordRecords[k].keywords)
                         keywords = [...keywords, ...keywordRecords[k].keywords]
-                        console.log("after", keywords)
+                        // console.log("after", keywords)
                     }
                     data[date][foodId] = null
 
@@ -42,7 +42,7 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
 
             }
         }
-        console.log("fetch keyword by user ", data)
+        // console.log("fetch keyword by user ", data)
         return res.status(201).json(data)
     } catch (error) {
         console.log("sys error", error)
@@ -116,10 +116,9 @@ try {
 
                 let keywords = []
                 for (let k = 0; k < keywordRecords.length; k++) {
-                    // const arrayKeyword = Array.isArray(keywordRecords[k].keywords )? keywords[k].keywords: [keywordRecords[k].keywords]
-                    console.log("add keyword", keywordRecords[k].keywords)
+                  
                     keywords = [...keywords,...keywordRecords[k].keywords]
-                    console.log( "after", keywords)
+                    
                 }
                 data[date][foodId] = null
 
@@ -131,7 +130,7 @@ try {
             
         }
     }
-    console.log("fetch keyword ", data)
+
     return res.status(201).json(data)
 } catch (error) {
     console.log("sys error", error)

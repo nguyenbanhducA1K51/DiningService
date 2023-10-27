@@ -16,7 +16,7 @@ const foodImageStorage = multer.diskStorage({
 
     },
     filename: (req, file, cb) => {
-        const saveFile = Date.now() + "_" + file.originalname
+        const saveFile = Date.now() + "_"+file.originalname
         cb(null, saveFile)
         req.body.filePath = saveFile
     }

@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler"
 import { Food } from "../models/foodModel"
+import { dailyFood } from "../models/dailyFoodModel"
 import mongoose from "mongoose"
 import path from "path"
 const fs = require('fs');
@@ -70,6 +71,8 @@ const delOne = asyncHandler(async (req, res) => {
       }
     })
 
+    const deletedDailyItem = await dailyFood.deleteMany({ foodId: object_id })
+    
     res.status(200).json({ message: "Deleted item" });
   } else {
 
@@ -81,13 +84,14 @@ const delOne = asyncHandler(async (req, res) => {
 
 })
 const createFood = asyncHandler(async (req, res) => {
-  console.log("go from server")
+  
   const user = req.user
   if (user.permission != 9) {
-    req.send(404).json({ message: "Unathorized for this operation" })
+    req.staus(404).json({ message: "Unathorized for this operation" })
   }
   try {
     const { name, description, filePath } = req.body
+    console.log(" create dish",req.body)
     if (!name || !description || !filePath) {
       res.status(400)
       throw new Error("Missing either name, description or file")
@@ -110,6 +114,7 @@ const createFood = asyncHandler(async (req, res) => {
     res.status(201).json({ "_id": item._id })
   } catch (error) {
     res.status(400)
+    console.log(error)
     throw new Error(error)
   }
 })

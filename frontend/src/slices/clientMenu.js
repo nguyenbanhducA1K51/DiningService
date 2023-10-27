@@ -10,7 +10,9 @@ const initialState = {
     weekdata: {},
     weekKeyword:{},
     error: "",
-    userWeekKeyword:{}
+    userWeekKeyword: {},
+    userWeekRating: {},
+    weekRating:{}
 }
 
 const FETCH_MENU_API = "api/dining/dailyFood"
@@ -29,12 +31,14 @@ export const selectAnchor=state=>{
 export const selectUserKeyword = state => {
     return state.clientMenu.userWeekKeyword
 }
+export const selectUserWeekRating = state => state.clientMenu.userWeekRating 
+export const selectWeekRating=state=> state.clientMenu.weekRating
 export const fetchUserKeyword = createAsyncThunk(
     "clientMenu/fetchUserKeyword", async (data) => {
         try {
             const params = data
             const res = await axios.get(FETCH_KEYWORD_USER, { params })
-            console.log("client fetch user keyword", res.data)
+            // console.log("client fetch user keyword", res.data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -66,7 +70,7 @@ export const fetchMenu = createAsyncThunk(
         try {
             const params = data
             const res = await axios.get(FETCH_MENU_API, { params })
-            console.log("client fetch menu",res.data)
+            // console.log("client fetch menu",res.data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -84,7 +88,7 @@ export const fetchRating = createAsyncThunk(
             const res = await axios.get(FETCH_RATING, { params })
             return res.data
         } catch (error) {
-            if (!error.response) {
+            if (!error.response ||!error.response.data) {
                 throw error
             }
             console.log("error", error.response.data.message)
@@ -97,7 +101,7 @@ export const fetchKeyword = createAsyncThunk(
         try {
             const params = data
             const res = await axios.get(FETCH_KEYWORD, { params })
-            console.log("client fetch keyword",res.data)
+            // console.log("client fetch keyword",res.data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -129,7 +133,7 @@ export const postRating = createAsyncThunk(
             const res = await axios.post(POST_RATING, data)
             return res.data
         } catch (error) {
-            if (!error.response) {
+            if (!error.response||! error.response.data) {
                 throw error
             }
             console.log("error", error.response.data.message)
@@ -179,7 +183,12 @@ const clientMenuSlice = createSlice({
                state.userWeekKeyword=action.payload
 
             })
+            .addCase(fetchRating.fulfilled, (state,action)=> {
+                state.weekRating = action.payload.rating 
+                state.userWeekRating=action.payload.userRating 
+        })
     }
+
 
 
 })

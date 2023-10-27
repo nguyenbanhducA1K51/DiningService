@@ -10,6 +10,7 @@ const ListFoodItem = () => {
     const foodItems = useSelector(selectAllFoodItems)
     const error = useSelector(selectError)
     const status = useSelector(selectStatus)
+    
     useEffect(() => {
         dispatch(fetchItems())
     }, [])
@@ -43,9 +44,9 @@ const ListFoodItem = () => {
         return (
             <>
                 <div className="container">
-                    <div className="row">
+                    <div className="row m-2 ">
                         {foodItems.map((element, index) => (
-                            <div key={index} className="col-md-4">
+                            <div key={index} className="col-md-4 mr-1 mb-1">
                                 {displayItem(element)}
                             </div>
                         ))}

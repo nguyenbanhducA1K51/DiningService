@@ -3,7 +3,7 @@ import { useState, useEffect,useRef } from "react"
 import { toast } from "react-toastify"
 import { useDispatch, useSelector } from "react-redux"
 import {selectClientWeekKeyword,selectAnchor,setAnchorDate,selectUserKeyword, fetchUserKeyword,selectError, selectClientWeekMenu, fetchMenu, fetchRating, fetchKeyword, postKeyword, postRating } from "../slices/clientMenu";
-import { getTodayDate } from "../helper/calculateDay";
+import { selectUserWeekRating, selectWeekRating , } from "../slices/clientMenu";
 import { Modal } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import { dateToWeekDay } from "../helper/calculateDay";
@@ -13,6 +13,9 @@ import { format, parse } from 'date-fns'
 import { reduceToFullDate } from "../helper/calculateDay";
 
 const MenuDisplayScreen = () => {
+
+    const userDataRating=useSelector(selectUserWeekRating)
+    const dataRating=useSelector (selectWeekRating)
     const weekKeyword= useSelector(selectClientWeekKeyword)
     const anchorDate=useSelector(selectAnchor)
     const imgSource = "/image/imagestorage/"
@@ -30,6 +33,10 @@ const MenuDisplayScreen = () => {
     const [calendarVisible, setCalendarVisible] = useState(false);
     const [ dateCalendar,setDateCalendar]=useState(null)
     const calendarRef = useRef(null);
+
+    const [rating,setRating]=useState(10)
+
+    const DEFAULT_DATE="2023-10-25"
     const toggleCalendar = () => {
         setCalendarVisible(!calendarVisible);
     };
@@ -86,15 +93,21 @@ const MenuDisplayScreen = () => {
         if (anchorDate) {
             console.log(" anchordate change")
             setDateCalendar(reduceToFullDate(anchorDate))
-            // dispatch(fetchWeekMenu({ date: anchorDate }))
+            dispatch(fetchMenu({ date: anchorDate}))
+            dispatch(fetchKeyword({ anchorDate: anchorDate }))
+            dispatch(fetchUserKeyword({ anchorDate: anchorDate }))
+            dispatch(fetchRating({ date: anchorDate }))
+        
         }
 
     }, [anchorDate])
 
     useEffect(() => {
-        dispatch(fetchMenu({ date: getTodayDate() }))
-        dispatch(fetchKeyword({ anchorDate: getTodayDate() }))
-        dispatch(fetchUserKeyword({anchorDate:getTodayDate()}))
+        dispatch(fetchMenu({ date: DEFAULT_DATE }))
+        dispatch(fetchKeyword({ anchorDate: DEFAULT_DATE }))
+        dispatch(fetchUserKeyword({anchorDate:DEFAULT_DATE}))
+        dispatch(fetchRating ({anchorDate:DEFAULT_DATE}))
+    
     }, [])
     useEffect(() => {
         if (error) {
@@ -124,9 +137,15 @@ const MenuDisplayScreen = () => {
     
     }
     const updateKeywords = () => {
+        // const userRating=document.getElementById("rating").value
 
-        
+        // if (userRating < 0 || userRating > 10) {
+        //     setError("Invalid rating")
+        //     return
+        // }
+            
         dispatch(postKeyword({ date: date, food_id: foodId, keywords: userKeywords }))
+        // dispatch (postRating({rating:userRating,date:date,foodId:foodId}))
         setError(sliceError)
         if (!error) {
             toast.success("updated ! reload to see your keywords")
@@ -175,10 +194,13 @@ const MenuDisplayScreen = () => {
             }
 
             return (
-                <div id={index} className="col-md-3 " >
-                    <div className="card" style={img_bg}>
-                        <div className="card-body d-flex justify-content-between flex-column">
-                            <h5 className="text-center text-card">{dailymenu[id].name}</h5>
+               
+                <div id={index} className="card col-md-2  child-card" style={img_bg}>
+                    <div className="card-body d-flex justify-content-between flex-column p-1">
+                        <div className="d-flex justify-content-center title-div" >
+                            
+                            <span className=""> {dailymenu[id].name}</span> 
+                            </div>
                            
                         </div>
                             <div className="row d-flex justify-content-around">
@@ -201,7 +223,7 @@ const MenuDisplayScreen = () => {
                           
                             </div>
                     </div>
-                </div>
+
             );
         } else {
             return null;
@@ -209,14 +231,14 @@ const MenuDisplayScreen = () => {
 
     }
     
-    const dailyMenu = (day, dailymenu) => {
-
+    const DailyMenu = (day, dailymenu) => {
+        
 
         return (
 
             <>
-                <span> { dateToWeekDay(day)} {day}</span>
-                <div className="row">
+                <span className="bold-text"> { dateToWeekDay(day)} {day}</span>
+                <div className="row parent-card d-flex justify-content-around" >
                     {Object.keys(dailymenu).map((id, index) => (
                         renderFoodCard(day, dailymenu, id, index)
                     ))}
@@ -249,9 +271,18 @@ const MenuDisplayScreen = () => {
                     <Modal.Title>Rating</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
+                    {/* <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Rating</span>
+                        </div>
+                        <input id="rating" type="number" class="form-control" placeholder="Give a number from 0 to 10"  aria-describedby="basic-addon1"/>
+                    </div> */}
+                    
                     <div className="input-group mb-3">
-                        <input id='keywordInput' type="text" className="form-control" placeholder="keyword"  aria-label="keyword" aria-describedby="basic-addon2" />
+                        
+                       
+
+                        <input id='keywordInput' type="text" className="form-control" placeholder="Add your keyword"  aria-label="keyword" aria-describedby="basic-addon2" />
                         <div className="input-group-append">
                             <button className="btn btn-outline-secondary" type="button" onClick={e => { addKeyword() }} >Add </button>
                         </div>
@@ -318,10 +349,7 @@ const MenuDisplayScreen = () => {
             <div className="col d-flex flex-column justify-content-center align-items-center" style={{
                 position: 'relative'
             }}>
-                <div >
-                    <button onClick={e=>toggleCalendar()} className="btn btn-dark">Show Calendar</button>
-
-                </div>
+                
                 <div>
 
                     {calendarVisible && (
@@ -351,20 +379,25 @@ const MenuDisplayScreen = () => {
     }
     return (
         <>
+            {/* {console.log("err",error)} */}
             <RatingAndKeyword />
             <FloatFullKeyword />
             <CalendarComponent />
-            {console.log("week keyword", weekKeyword)}
-            {console.log("client menu", clientMenu)}
+            {/* {console.log("week keyword", week3Keyword)} */}
+            {/* {console.log("client menu", clientMenu)}
+            {console.log("clinet rating", dataRating)} */}
         <div className="py-5 " style={style}>
+                <div  className="d-flex  m-3">
+                    <button onClick={e => toggleCalendar()} className="btn btn-dark">Show Calendar</button>
 
+                </div>
             <div className="container">
                
-                <div className="menu">
+                <div className="menu ">
                     {
                         Object.keys(clientMenu).map((day, index) => (
-                            <div id={index} className="mt-3">
-                                {dailyMenu(day, clientMenu[day])}
+                            <div id={index} className="mt-3 ">
+                                {DailyMenu(day, clientMenu[day])}
 
                             </div>
 

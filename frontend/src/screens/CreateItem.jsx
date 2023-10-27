@@ -4,6 +4,7 @@ import { toast } from "react-toastify"
 import { useState, useEffect } from 'react'
 import { createItem, selectError} from '../slices/foodItemSlice'
 import { useDispatch,useSelector } from 'react-redux'
+
 const CreateItemScreen = () => {
     const dispatch = useDispatch()
     const error = useSelector(selectError)
@@ -38,12 +39,20 @@ const CreateItemScreen = () => {
         let formData = new FormData()
         formData.append("name", foodTitle)
         formData.append("description", foodDescription)
-        formData.append("file", imageFile, "foodImg.png")
+        formData.append("file", imageFile, imageFile.name)
+        for (const entry of formData.entries()) {
+            const [fieldName, fieldValue] = entry;
+            // console.log(`Field Name: ${fieldName}, Field Value: ${fieldValue}`);
+        }
         dispatch(createItem(formData))
         if (!error) {
             toast.success("success")
         }
-      
+        setFoodTitle("")
+        setFoodDescription("")
+        setImageFile(null)
+        // document.getElementById("image").files[0]=null
+
     }
     return (
         <div>
@@ -72,6 +81,7 @@ const CreateItemScreen = () => {
                         <Form.Label> Image illustration </Form.Label>
                         <Form.Control
                             type="file"
+                            id="image"
                             onChange={handleImageFileChange} />
                     </Form.Group>
                     <Button variant="primary" type="submit" className="mt-3">

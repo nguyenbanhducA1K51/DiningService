@@ -169,3 +169,28 @@ color: #FFFFFFC0;
     font-size:0.7em;
     font-weight:100
 }
+
+
+ .parent-card {
+     display: flex;
+ }
+
+ .child-card {
+     flex: 1;
+     border: 1px solid #ccc;
+     margin: 5px;
+ }
+
+ .bold-text {
+     font-weight: bold;
+     color: #333;
+     /* Dark gray color in hexadecimal (#333) */
+ }
+
+  .title-div {
+      background-color: black;
+      color: white;
+      padding: 5px;
+      font-size: 16px;
+      border-radius: 10px;
+  }
