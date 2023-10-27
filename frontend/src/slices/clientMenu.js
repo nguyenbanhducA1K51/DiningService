@@ -154,7 +154,7 @@ const clientMenuSlice = createSlice({
                 state.error = "expect payload to be nonempty"
                 return
             }
-            const { anchorDate } = action.payload;
+            let{ anchorDate } = action.payload;
             if (!anchorDate) {
                 anchorDate = new Date().toISOString().slice(0, 10)
             }

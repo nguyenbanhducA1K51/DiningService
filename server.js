@@ -14,9 +14,6 @@ const app = express();
 
 
 connectDB()
-// app.get('/', (req, res) => {
-//     res.send("ready");
-// });
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -30,7 +27,7 @@ if (process.env.NODE_ENV === "production") {
     console.log("Dir", __dirname)
     console.log(path.join(__dirname, "frontend/dist"))
     app.use(express.static(path.join(__dirname, "frontend/dist")))
-    
+     
     app.get('*', (req, res) => {
         res.sendFile(path.resolve( __dirname,'frontend','dist',"index.html"))
     })
