@@ -2,7 +2,7 @@
   "name": "othernode",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "concurrently  \"npm run server\" \"npm run client\"  ",
     "start": "node backend/server.js",
