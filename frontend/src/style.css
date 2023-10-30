@@ -100,8 +100,8 @@ color: #FFFFFFC0;
 }
 
 .rounded-image {
-    max-width: 10%;
-    border-radius: 20%;
+    /* max-width: 10%;
+    border-radius: 20%; */
     cursor:pointer;
     transition: transform 0.2s ease-in-out;
     /* Rounded border for a circular shape */
@@ -193,4 +193,15 @@ color: #FFFFFFC0;
       padding: 5px;
       font-size: 16px;
       border-radius: 10px;
+  }
+
+  .white-back {
+      background-color: #ffffff;
+      /* White background */
+      border: 2px solid #333;
+      /* Light gray border with 2px width (adjust the color as needed) */
+      border-radius: 10px;
+      /* Rounded corners with a 10px radius */
+      padding: 3px;
+      /* Add padding for content inside the element (adjust as needed) */
   }

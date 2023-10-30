@@ -2,10 +2,10 @@ import express from "express"
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 
-import  userRoutes from "./backend/routes/userRoutes.js"
-import { notFound, errorHandler } from './backend/middleware/errorMiddleware.js';
-import connectDB from "./backend/config/db.js";
-import diningRoute from "./backend/routes/diningRoute.js"
+import  userRoutes from "./routes/userRoutes.js"
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import connectDB from "./config/db.js";
+import diningRoute from "./routes/diningRoute.js"
 import path from "path"
 import  process from 'process'
 dotenv.config()
@@ -18,18 +18,21 @@ connectDB()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
-app.use("/image", express.static(path.join(__dirname, "storage")))
+
+const grandPath = path.dirname(__dirname);
+app.use("/image", express.static(path.join(grandPath, "storage")))
 app.use('/api/users', userRoutes)
 app.use('/api/dining', diningRoute)
 
 if (process.env.NODE_ENV === "production") {
-    const __dirname = path.resolve()
-    console.log("Dir", __dirname)
-    console.log(path.join(__dirname, "frontend/dist"))
-    app.use(express.static(path.join(__dirname, "frontend/dist")))
+
+    const rootpath = path.resolve(path.dirname(__dirname))
+    console.log("Dir", rootpath)
+    console.log(path.join(rootpath, "frontend/dist"))
+    app.use(express.static(path.join(rootpath, "frontend/dist")))
      
-    app.get('/', (req, res) => {
-        res.sendFile(path.resolve( __dirname,'frontend','dist',"index.html"))
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(rootpath,'frontend','dist',"index.html"))
     })
 }
 else {

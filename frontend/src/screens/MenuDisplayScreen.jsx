@@ -11,6 +11,8 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { format, parse } from 'date-fns'
 import { reduceToFullDate } from "../helper/calculateDay";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPizzaSlice } from '@fortawesome/free-solid-svg-icons';
 
 const MenuDisplayScreen = () => {
 
@@ -143,7 +145,7 @@ const MenuDisplayScreen = () => {
         //     setError("Invalid rating")
         //     return
         // }
-            
+        
         dispatch(postKeyword({ date: date, food_id: foodId, keywords: userKeywords }))
         // dispatch (postRating({rating:userRating,date:date,foodId:foodId}))
         setError(sliceError)
@@ -187,7 +189,7 @@ const MenuDisplayScreen = () => {
 
         if (dailymenu && dailymenu[id]) {
             const img_bg = {
-                background: `url(${imgSource}/${dailymenu[id].filePath})`,
+                background: `url(${imgSource}${dailymenu[id].filePath})`,
                 backgroundSize: 'cover', 
                 backgroundRepeat: 'no-repeat',
                 aspectRatio: '1 / 1'
@@ -206,22 +208,25 @@ const MenuDisplayScreen = () => {
                             <div className="row d-flex justify-content-around">
                             {weekKeyword[day]&& weekKeyword[day][id] ? renderKeywords(weekKeyword[day][id]) : null}
                             </div>
-                            <div className="m-1">
-                                <img
-                                    src="/src/images/yummy.png"
-                                    className="rounded-image"
-                                    alt=""
-                                    onClick={(e) => {
-                                        handleShow(day, id);
-                                        setFoodId(id)
-                                        setDate(day)
+                    <div className="m-1 d-flex ">
 
-                                        displayRatingAndKeyword( day,id)
+                        <div className="white-back">
 
-                                    }}
-                            />
-                          
-                            </div>
+                            <FontAwesomeIcon icon={faPizzaSlice} size="1x" className="rounded-image"
+                                alt=""
+                                onClick={(e) => {
+                                    handleShow(day, id);
+                                    setFoodId(id)
+                                    setDate(day)
+
+                                    displayRatingAndKeyword(day, id)
+
+                                }} />
+                        </div>
+                        
+
+                    </div>
+
                     </div>
 
             );
@@ -271,6 +276,7 @@ const MenuDisplayScreen = () => {
                     <Modal.Title>Rating</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <span className="mb-1 small" >Remember to add your keywords before update </span>
                     {/* <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">Rating</span>
@@ -302,7 +308,7 @@ const MenuDisplayScreen = () => {
                 <Modal.Footer >
                     <div className="d-flex flex-column ">
 
-                    <span>For display convenient it only display 6 keywords at maximum</span>
+                        <span className="mb-1" >For display convenient it only display 6 keywords at maximum</span>
                     <div className="d-flex justify-content-between">
                         <button className="btn btn-dark" onClick={e=>{updateKeywords()}}>Update</button>
                         <button className="btn btn-outline-secondary" onClick={displayFullKeyword} >Full Keyword</button>

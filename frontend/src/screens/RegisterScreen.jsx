@@ -92,10 +92,10 @@ const RegisterScreen = () => {
 
                 <FormGroup className='my-2' controlId='confirmPassword'>
 
-                    <FormLabel> confirm Password</FormLabel>
+                    <FormLabel> Confirm Password</FormLabel>
                     <FormControl type="password"
                         placeholder='confirm password'
-                        value={confirmPassword}
+                        value={confirmPassword} 
                         onChange={(e) => setConfirmPassword(e.target.value)}>
 
                     </FormControl>

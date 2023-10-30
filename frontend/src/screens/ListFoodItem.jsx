@@ -27,7 +27,7 @@ const ListFoodItem = () => {
                 <div className="row">
                     <div className="col-md-6 img-contain ">
                     
-                            <img src={`${imgSource}/${item.filePath}`} className="img-fluid rounded mx-auto d-block" alt="Your Image"></img>
+                            <img src={`${imgSource}${item.filePath}`} className="img-fluid rounded mx-auto d-block" alt="Your Image"></img>
 
                        
                     </div>
