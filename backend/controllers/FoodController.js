@@ -3,14 +3,13 @@ import { Food } from "../models/foodModel"
 import { dailyFood } from "../models/dailyFoodModel"
 import mongoose from "mongoose"
 import path from "path"
+import dotenv from 'dotenv'
+dotenv.config()
 const fs = require('fs');
 const STORAGE_PATH = path.resolve(__dirname + "/../../storage")
-console.log(STORAGE_PATH)
-console.log(fs.existsSync(STORAGE_PATH))
 const getFood = asyncHandler(async (req, res) => {
   try {
     const returnDocuments = await Food.find({}).exec()
-    console.log("return documents", returnDocuments.length)
     return res.status(201).json(returnDocuments)
   } catch (error) {
     console.log(error)
@@ -30,7 +29,7 @@ const delAll = asyncHandler(async (req, res) => {
   const result = await Food.deleteMany({});
   for (record in result) {
     const imagePath = path.join(STORAGE_PATH, "imagestorage", record.filePath)
-    console.log("Find image file ", fs.existsSync(imagePath))
+    // console.log("Find image file ", fs.existsSync(imagePath))
     fs.unlink(imagePath, (err) => {
       if (err) {
         console.error(`Error deleting the image file: ${err}`);
@@ -40,7 +39,7 @@ const delAll = asyncHandler(async (req, res) => {
     })
 
   }
-  console.log(`Deleted ${result.deletedCount} records.`);
+  // console.log(`Deleted ${result.deletedCount} records.`);
   res.status(200).json({ message: "delete all the food item in collection" })
 
 })
@@ -60,9 +59,9 @@ const delOne = asyncHandler(async (req, res) => {
   const object_id = new mongoose.Types.ObjectId(food_id);
   const deletedRecord = await Food.findOneAndRemove({ _id: object_id });
   if (deletedRecord) {
-    console.log("delete record", deletedRecord)
+    // console.log("delete record", deletedRecord)
     const imagePath = path.join(STORAGE_PATH, "imagestorage", deletedRecord.filePath)
-    console.log("Find image file ", fs.existsSync(imagePath))
+    // console.log("Find image file ", fs.existsSync(imagePath))
     fs.unlink(imagePath, (err) => {
       if (err) {
         console.error(`Error deleting the image file: ${err}`);
@@ -72,7 +71,7 @@ const delOne = asyncHandler(async (req, res) => {
     })
 
     const deletedDailyItem = await dailyFood.deleteMany({ foodId: object_id })
-    
+
     res.status(200).json({ message: "Deleted item" });
   } else {
 
@@ -84,18 +83,18 @@ const delOne = asyncHandler(async (req, res) => {
 
 })
 const createFood = asyncHandler(async (req, res) => {
-  
+
   const user = req.user
   if (user.permission != 9) {
     req.staus(404).json({ message: "Unathorized for this operation" })
   }
   try {
     const { name, description, filePath } = req.body
-    console.log(" create dish",req.body)
+    console.log("create", req)
+
     if (!name || !description || !filePath) {
       res.status(400)
       throw new Error("Missing either name, description or file")
-
     }
     const foodExist = await Food.findOne({ name })
 
@@ -110,7 +109,7 @@ const createFood = asyncHandler(async (req, res) => {
       filePath
 
     })
-    console.log(item )
+
     res.status(201).json({ "_id": item._id })
   } catch (error) {
     res.status(400)

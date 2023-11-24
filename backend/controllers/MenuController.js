@@ -28,7 +28,7 @@ const getMenu = asyncHandler(async (req, res) => {
             }
         }
     }
-console.log("fetch menu",{menu})
+// console.log("fetch menu",{menu})
     res.status(201).json(menu)
 
 })
@@ -41,7 +41,7 @@ const postMenu = asyncHandler(async (req, res) => {
             res.status(404).json({ message: "Unothorized operation" })
         }
         const { menu } = req.body
-        console.log("post menu",req.body)
+        // console.log("post menu",req.body)
         const datePattern = /^\d{4}-\d{2}-\d{2}$/;
         for (const key in menu) {
             if (menu.hasOwnProperty(key)) {
@@ -81,7 +81,7 @@ const postMenu = asyncHandler(async (req, res) => {
                 }
             }
         }
-        console.log("create record", createRecord, "delete record", deleteRecord)
+        // console.log("create record", createRecord, "delete record", deleteRecord)
         res.status(201).json({ createRecord, deleteRecord })
 
     } catch (error) {

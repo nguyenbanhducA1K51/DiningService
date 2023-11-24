@@ -7,7 +7,7 @@ export const getRating = asyncHandler(async (req, res) => {
     try {
         
     
-    console.log(" server get rating")
+    // console.log(" server get rating")
     const {user}=req
     const { anchorDate} = req.query
     if (!anchorDate) {
@@ -25,7 +25,7 @@ export const getRating = asyncHandler(async (req, res) => {
             for (let j = 0; j < dailyRecords.length; j++){
                 const dailyRecord = dailyRecords[j]
                 const foodId = dailyRecord.foodId 
-                console.log("dailyrec", dailyRecord)
+                // console.log("dailyrec", dailyRecord)
                 const ratingRecords = await Rating.find({ dailyFoodId: dailyRecord._id })
                 
                 let rating = []
@@ -55,7 +55,6 @@ export const getRating = asyncHandler(async (req, res) => {
         }
     }
 
-    // console.log ("usr rate",userRatings,"rate",ratings)
         return res.status(201).json({ userRatings, ratings })
     } catch (error) {
 console.log(error)

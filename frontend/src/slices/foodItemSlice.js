@@ -21,10 +21,7 @@ export const fetchItems = createAsyncThunk(
 export const createItem = createAsyncThunk(
     'foodItem/createItem', async (data, { rejectWithValue }) => {
         try {
-            // console.log("make request")
-            // console.log("data",data)
             const res = await axios.post(CREATE_ITEM, data)
-            // console.log("res", res)
         } catch (error) {
             console.log(error)
             if (!err.response || !err.response.data) {

@@ -10,7 +10,7 @@ const defaultUser = asyncHandler(async(req, res)=> {
     }
     if (role == "admin") {
         const adminUser = await User.findOne({ email: "ad@gmail.com" })
-       console.log("admin",adminUser)
+    //    console.log("admin",adminUser)
         generateToken(res, adminUser._id)
         return res.status(201).json({
             _id: adminUser._id,

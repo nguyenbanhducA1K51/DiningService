@@ -52,7 +52,7 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
 })
 export const postKeyWords = asyncHandler(async (req, res) => {
     const { user } = req
-    console.log("post", req.body)
+    // console.log("post", req.body)
     let { date, food_id, keywords } = req.body
 
     if (!date || !food_id || !keywords) {
@@ -79,7 +79,7 @@ export const postKeyWords = asyncHandler(async (req, res) => {
         user: user._id,
         dailyFoodId: dailyFoodRecord._id
     })
-     console.log("delete keyword:", existKeywordRecord)
+    //  console.log("delete keyword:", existKeywordRecord)
     if (keywords.length > 0) {
         const keywordRecord = await Keyword.create({
             user: user._id,
@@ -87,7 +87,7 @@ export const postKeyWords = asyncHandler(async (req, res) => {
             keywords: keywords
         })
         
-        console.log("create", keywordRecord)
+        // console.log("create", keywordRecord)
         return res.status(201).json({ record: keywordRecord })
     }
     else {
