@@ -137,7 +137,7 @@ const menuSlice = createSlice({
             })
             .addCase(fetchWeekMenu.fulfilled, (state, action) => {
                 state.status = 'succeed'
-                state.weekmenu = action.payload
+                state.weekmenu = action.payload.menu
             })
             .addCase(fetchWeekMenu.rejected, (state, action) => {
                 state.status = "failed"

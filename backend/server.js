@@ -1,20 +1,16 @@
 import express from "express"
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
-
 import  userRoutes from "./routes/userRoutes.js"
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import connectDB from "./config/db.js";
 import diningRoute from "./routes/diningRoute.js"
 import path from "path"
-import  process from 'process'
+import process from 'process'
 dotenv.config()
 const port = process.env.PORT || 5000;
 const app = express();
-
-
 connectDB()
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())

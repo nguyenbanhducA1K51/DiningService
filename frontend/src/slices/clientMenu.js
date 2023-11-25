@@ -7,6 +7,7 @@ import { getWeekDays } from "../helper/calculateDay";
 
 const initialState = {
     anchorDate: null,
+    images:{},
     weekdata: {},
     weekKeyword:{},
     error: "",
@@ -32,7 +33,8 @@ export const selectUserKeyword = state => {
     return state.clientMenu.userWeekKeyword
 }
 export const selectUserWeekRating = state => state.clientMenu.userWeekRating 
-export const selectWeekRating=state=> state.clientMenu.weekRating
+export const selectWeekRating = state => state.clientMenu.weekRating
+export const selectClientImages=state=>state.clientMenu.images
 export const fetchUserKeyword = createAsyncThunk(
     "clientMenu/fetchUserKeyword", async (data) => {
         try {
@@ -70,7 +72,6 @@ export const fetchMenu = createAsyncThunk(
         try {
             const params = data
             const res = await axios.get(FETCH_MENU_API, { params })
-            // console.log("client fetch menu",res.data)
             return res.data
         } catch (error) {
             if (!error.response) {
@@ -158,7 +159,6 @@ const clientMenuSlice = createSlice({
             if (!anchorDate) {
                 anchorDate = new Date().toISOString().slice(0, 10)
             }
-            console.log("anchor", anchorDate)
             state.anchorDate = anchorDate
 
 
@@ -170,7 +170,8 @@ const clientMenuSlice = createSlice({
         builder
             .addCase(fetchMenu.fulfilled, (state, action) => {
 
-                state.weekdata = action.payload
+                state.weekdata = action.payload.menu 
+                state.images=action.payload.images
                 
 
             })

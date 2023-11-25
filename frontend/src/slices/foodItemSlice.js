@@ -3,6 +3,7 @@ import axios from "axios"
 const initialState = {
     foodList: [],
     status: "iddle",
+    images:[],
     error: null
 }
 const FOOD_API = "api/dining/food"
@@ -72,6 +73,9 @@ export const selectAllFoodItems = state => {
 
     return state.foodItem.foodList
 }
+export const selectImages = state => {
+    return state.foodItem.images
+}
 export const selectError = state => state.foodItem.error
 export const selectStatus = state => state.foodItem.status
 const foodItemSlice = createSlice({
@@ -86,15 +90,16 @@ const foodItemSlice = createSlice({
     extraReducers(builder) {
         builder
             .addCase(fetchItems.fulfilled, (state, action) => {
-                state.status = 'succeeded'
-                state.foodList = action.payload
+                state.status = 'succeeded';
+                state.foodList = action.payload.foodList; 
+                state.images=action.payload.images
             })
             .addCase(fetchItems.rejected, (state, action) => {
                 state.status = "failed"
                 state.error = action.payload
             })
             .addCase(deleteItem.pending, (state, action) => {
-                state.stastus = "loading"
+                state.status = "loading"
             })
             .addCase(deleteItem.fulfilled, (state, action) => {
                 state.status = "succeed"

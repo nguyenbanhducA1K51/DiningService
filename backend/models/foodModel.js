@@ -8,7 +8,7 @@ const foodSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    filePath: {
+    fileIden: {
         type: String,
         require: true
     }

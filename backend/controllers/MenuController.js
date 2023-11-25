@@ -1,9 +1,12 @@
 import asyncHandler from "express-async-handler"
 import mongoose from "mongoose"
+import path from "path"
 import { dailyFood } from "../models/dailyFoodModel"
 import { Food } from "../models/foodModel"
 import { getWeekFromDate } from "../utils/dateUtils"
-
+import { cleanBuffer, getBlob,encodeImage } from "../azureConnection"
+import fs from "fs";
+const BUFFER = path.resolve(__dirname + "/../../storage/buffer")
 const getMenu = asyncHandler(async (req, res) => {
 
     const date = req.query.date
@@ -11,8 +14,9 @@ const getMenu = asyncHandler(async (req, res) => {
         res.status(404)
         throw new Error("cannot get param date")
     }
-
+try {
     let menu = {}
+    let images = {}
     const dateInWeek = getWeekFromDate(date)
     for (let index = 0; index < dateInWeek.length; index += 1) {
 
@@ -22,14 +26,25 @@ const getMenu = asyncHandler(async (req, res) => {
             for (let i = 0; i < records.length; i++) {
                 const foodRecord = await Food.findOne({ _id: records[i].foodId })
                 if (foodRecord) {
-                    menu[dateInWeek[index]][foodRecord._id]=foodRecord
+                    menu[dateInWeek[index]][foodRecord._id] = foodRecord
+                    if (!(foodRecord._id in images)) {
+                    
+                        const fileIden= foodRecord["fileIden"]
+                        const _id = foodRecord._id
+                       images[_id]= await encodeImage(fileIden)
+                    }
                 }
 
             }
         }
     }
-// console.log("fetch menu",{menu})
-    res.status(201).json(menu)
+    res.status(201).json({menu:menu, images:images})
+} catch (error) {
+    console.log(error)
+    res.send(401).json({message:"cannot get menu"})
+}
+   
+
 
 })
 
@@ -41,7 +56,6 @@ const postMenu = asyncHandler(async (req, res) => {
             res.status(404).json({ message: "Unothorized operation" })
         }
         const { menu } = req.body
-        // console.log("post menu",req.body)
         const datePattern = /^\d{4}-\d{2}-\d{2}$/;
         for (const key in menu) {
             if (menu.hasOwnProperty(key)) {
@@ -81,7 +95,7 @@ const postMenu = asyncHandler(async (req, res) => {
                 }
             }
         }
-        // console.log("create record", createRecord, "delete record", deleteRecord)
+
         res.status(201).json({ createRecord, deleteRecord })
 
     } catch (error) {

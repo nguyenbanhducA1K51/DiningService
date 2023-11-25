@@ -205,3 +205,36 @@ color: #FFFFFFC0;
       padding: 3px;
       /* Add padding for content inside the element (adjust as needed) */
   }
+
+    .relcontainer {
+       
+        position: relative;
+        min-height: 100px;
+       
+        
+    }
+
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+        /* Ensure the image doesn't overflow the container */
+    }
+
+    .background-image img {
+        border-radius: 3%;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Ensures the image covers the entire area */
+    }
+    .foreground{
+        height: 100%;
+        aspect-ratio: 1/0.7;
+        z-index: 2;
+        
+    }

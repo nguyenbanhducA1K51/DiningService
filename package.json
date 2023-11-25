@@ -3,19 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  
   "scripts": {
     "dev": "concurrently  \"npm run server\" \"npm run client\"  ",
     "start": "node backend/server.js",
     "server": "nodemon --exec babel-node backend/server.js  --legacy-watch",
     "test": "jest",
     "client": "npm run dev --prefix frontend"
-  
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@azure/storage-blob": "^12.17.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "bcryptjs": "^2.4.3",

@@ -7,18 +7,16 @@ import { postMenu, getMenu } from "../controllers/MenuController"
 import { getRating, postRating } from "../controllers/RatingControlller"
 import { getKeywords, postKeyWords,getKeywordsByUser } from "../controllers/KeywordController"
 const router = express.Router()
-const IMG_SAVE = path.join(__dirname, "../../storage/imagestorage")
-
-const fullPath = path.resolve(IMG_SAVE)
+const BUFFER  = path.resolve(path.join(__dirname, "../../storage/buffer"))
 const foodImageStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, fullPath)
+        cb(null, BUFFER)
 
     },
     filename: (req, file, cb) => {
-        const saveFile = Date.now() + "_"+file.originalname
+        const saveFile = Date.now() + "_" + file.originalname
         cb(null, saveFile)
-        req.body.filePath = saveFile
+        req.body.fileIden = saveFile
     }
 })
 const upload = multer({ storage: foodImageStorage })

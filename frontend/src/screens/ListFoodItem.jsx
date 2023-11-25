@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { toast } from "react-toastify"
-import { fetchItems, selectAllFoodItems, deleteAll, deleteItem, selectStatus, selectError } from "../slices/foodItemSlice"
+import { fetchItems, selectAllFoodItems, selectImages, deleteItem, selectStatus, selectError } from "../slices/foodItemSlice"
 const ListFoodItem = () => {
     const imgSource = "/image/imagestorage/"
 
@@ -10,7 +10,8 @@ const ListFoodItem = () => {
     const foodItems = useSelector(selectAllFoodItems)
     const error = useSelector(selectError)
     const status = useSelector(selectStatus)
-    
+    const images=useSelector(selectImages)
+
     useEffect(() => {
         dispatch(fetchItems())
     }, [])
@@ -22,14 +23,15 @@ const ListFoodItem = () => {
         dispatch(fetchItems())
     }
     const displayItem = (item) => {
+        const extend = images[item._id]["type"]
+        const data = images[item._id]["data"]
+       
         return (
             <div className="container ">
                 <div className="row">
                     <div className="col-md-6 img-contain ">
-                    
-                            <img src={`${imgSource}${item.filePath}`} className="img-fluid rounded mx-auto d-block" alt="Your Image"></img>
-
-                       
+                        <img src={`data: ${extend};base64, ${data}`} className="img-fluid rounded mx-auto d-block" alt="Your Image"></img>
+                      
                     </div>
                     <div className="col-md-6">
                         <h3>{item.name}</h3>
@@ -59,6 +61,9 @@ const ListFoodItem = () => {
     }
     return (
         <>
+            {console.log(foodItems)
+            
+           }
             <div className="mt-4">
                 {display()}
             </div>

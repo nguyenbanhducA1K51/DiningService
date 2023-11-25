@@ -6,8 +6,6 @@ import mongoose from "mongoose"
 export const getRating = asyncHandler(async (req, res) => {
     try {
         
-    
-    // console.log(" server get rating")
     const {user}=req
     const { anchorDate} = req.query
     if (!anchorDate) {

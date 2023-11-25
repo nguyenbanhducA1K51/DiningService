@@ -4,32 +4,37 @@ import { dailyFood } from "../models/dailyFoodModel"
 import mongoose from "mongoose"
 import path from "path"
 import dotenv from 'dotenv'
+import fs from "fs"
+import { encodeImage,uploadFileToBlob, cleanBuffer, getBlob,deleteBlob } from "../azureConnection"
 dotenv.config()
-const fs = require('fs');
-const STORAGE_PATH = path.resolve(__dirname + "/../../storage")
+const BUFFER = path.resolve(__dirname + "/../../storage/buffer")
 const getFood = asyncHandler(async (req, res) => {
   try {
-    const returnDocuments = await Food.find({}).exec()
-    return res.status(201).json(returnDocuments)
+    const docs = await Food.find({}).exec()
+    let images = {}
+    for (let i = 0; i < docs.length; i++) {
+      const iden = docs[i]["fileIden"] 
+      const id = docs[i]["_id"]
+      images[id]=await encodeImage(iden )
+      
+    }
+    // console.log("im",images)
+    res.status(201).json({ foodList: docs, images: images })
+    cleanBuffer()
   } catch (error) {
     console.log(error)
-    res.status(400)
-    throw new Error("Error in finding document")
-
+    return res.status(400)
   }
-
 })
-
 const delAll = asyncHandler(async (req, res) => {
-
   const user = req.user
   if (user.permission != 9) {
     req.send(404).json({ message: "Unathorized for this operation" })
   }
   const result = await Food.deleteMany({});
   for (record in result) {
-    const imagePath = path.join(STORAGE_PATH, "imagestorage", record.filePath)
-    // console.log("Find image file ", fs.existsSync(imagePath))
+    const imagePath = path.join(STORAGE_PATH, "imagestorage", record.fileIden)
+
     fs.unlink(imagePath, (err) => {
       if (err) {
         console.error(`Error deleting the image file: ${err}`);
@@ -39,8 +44,7 @@ const delAll = asyncHandler(async (req, res) => {
     })
 
   }
-  // console.log(`Deleted ${result.deletedCount} records.`);
-  res.status(200).json({ message: "delete all the food item in collection" })
+  return res.status(200).json({ message: "delete all the food item in collection" })
 
 })
 const delOne = asyncHandler(async (req, res) => {
@@ -48,10 +52,9 @@ const delOne = asyncHandler(async (req, res) => {
   if (user.permission != 9) {
     req.send(404).json({ message: "Unathorized for this operation" })
   }
-
+try {
   const { food_id } = req.body
   if (!food_id) {
-    console.log("erro here")
     res.status(400)
     throw new Error(" Missing food id")
 
@@ -59,17 +62,8 @@ const delOne = asyncHandler(async (req, res) => {
   const object_id = new mongoose.Types.ObjectId(food_id);
   const deletedRecord = await Food.findOneAndRemove({ _id: object_id });
   if (deletedRecord) {
-    // console.log("delete record", deletedRecord)
-    const imagePath = path.join(STORAGE_PATH, "imagestorage", deletedRecord.filePath)
-    // console.log("Find image file ", fs.existsSync(imagePath))
-    fs.unlink(imagePath, (err) => {
-      if (err) {
-        console.error(`Error deleting the image file: ${err}`);
-      } else {
-        console.log(`Image file was deleted successfully.`);
-      }
-    })
 
+    await deleteBlob(deletedRecord["fileIden"])
     const deletedDailyItem = await dailyFood.deleteMany({ foodId: object_id })
 
     res.status(200).json({ message: "Deleted item" });
@@ -79,25 +73,29 @@ const delOne = asyncHandler(async (req, res) => {
     res.status(400)
     throw new Error(" Cannot find that item !")
   }
-
-
+} catch (error) {
+  console.log(error)
+  res.send(500).json("message:'error when delete'")
+}
 })
 const createFood = asyncHandler(async (req, res) => {
 
   const user = req.user
   if (user.permission != 9) {
-    req.staus(404).json({ message: "Unathorized for this operation" })
+    req.status(404).json({ message: "Unathorized for this operation" })
   }
   try {
-    const { name, description, filePath } = req.body
-    console.log("create", req)
 
-    if (!name || !description || !filePath) {
-      res.status(400)
-      throw new Error("Missing either name, description or file")
+    const { name, description, fileIden } = req.body
+
+    if (fileIden == null) {
+      console.log("file is null")
+      return req.status(404).json({ message: "image is empty" })
     }
+    const savePath = path.join(BUFFER, fileIden)
+    const upImageRes = await uploadFileToBlob(fileIden, savePath)
+  
     const foodExist = await Food.findOne({ name })
-
     if (foodExist) {
       res.status(400)
       throw new Error("dish exist")
@@ -106,15 +104,15 @@ const createFood = asyncHandler(async (req, res) => {
     const item = await Food.create({
       name,
       description,
-      filePath
+      fileIden
 
     })
 
     res.status(201).json({ "_id": item._id })
+    cleanBuffer()
   } catch (error) {
-    res.status(400)
     console.log(error)
-    throw new Error(error)
+    return res.status(400).json({ message: "cannot create item, try again later" })
   }
 })
 

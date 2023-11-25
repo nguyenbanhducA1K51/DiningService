@@ -6,7 +6,7 @@ import mongoose from "mongoose"
 import { getWeekFromDate } from "../utils/dateUtils"
 export const getKeywordsByUser = asyncHandler(async (req, res) => {
     try {
-        console.log("get keyword by user req")
+       
         const {user}=req
         const { anchorDate } = req.query
         if (!anchorDate) {
@@ -27,10 +27,9 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
 
                     let keywords = []
                     for (let k = 0; k < keywordRecords.length; k++) {
-                        // console.log("keywordrec", keywordRecords[k])
-                        // console.log("add keyword", keywordRecords[k].keywords)
+        
                         keywords = [...keywords, ...keywordRecords[k].keywords]
-                        // console.log("after", keywords)
+                        
                     }
                     data[date][foodId] = null
 
@@ -42,7 +41,7 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
 
             }
         }
-        // console.log("fetch keyword by user ", data)
+    
         return res.status(201).json(data)
     } catch (error) {
         console.log("sys error", error)
@@ -52,7 +51,7 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
 })
 export const postKeyWords = asyncHandler(async (req, res) => {
     const { user } = req
-    // console.log("post", req.body)
+
     let { date, food_id, keywords } = req.body
 
     if (!date || !food_id || !keywords) {
@@ -87,7 +86,6 @@ export const postKeyWords = asyncHandler(async (req, res) => {
             keywords: keywords
         })
         
-        // console.log("create", keywordRecord)
         return res.status(201).json({ record: keywordRecord })
     }
     else {
