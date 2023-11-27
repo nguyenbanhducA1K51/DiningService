@@ -7,7 +7,7 @@
     "dev": "concurrently  \"npm run server\" \"npm run client\"  ",
     "start": "node backend/server.js",
     "server": "nodemon --exec babel-node backend/server.js  --legacy-watch",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --forceExit",
     "client": "npm run dev --prefix frontend"
   },
   "keywords": [],

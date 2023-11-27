@@ -11,6 +11,10 @@ dotenv.config()
 const port = process.env.PORT || 5000;
 const app = express();
 connectDB()
+export const server = app.listen(port, () => {
+    console.log(`Server started on port ${port}`);
+});
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
@@ -39,8 +43,3 @@ else {
 app.use(notFound);
 app.use(errorHandler)
 
- const server = app.listen(port, () => {
-    console.log(`Server started on port ${port}`);
-});
-
-export default server
