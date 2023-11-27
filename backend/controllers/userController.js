@@ -10,7 +10,7 @@ const defaultUser = asyncHandler(async(req, res)=> {
     }
     if (role == "admin") {
         const adminUser = await User.findOne({ email: "ad@gmail.com" })
-    //    console.log("admin",adminUser)
+
         generateToken(res, adminUser._id)
         return res.status(201).json({
             _id: adminUser._id,
@@ -37,7 +37,7 @@ const authUser = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email })
     if (user && user.matchPassword(password)) {
         generateToken(res, user._id)
-        res.status(201).json({
+        res.status(200).json({
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -45,8 +45,8 @@ const authUser = asyncHandler(async (req, res) => {
         })
     }
     else {
-        res.status(401)
-        throw new Error("Invalid user email or password")
+        return res.status(401).json({ message: "Invalid user email or password" })
+
     }
 
 })

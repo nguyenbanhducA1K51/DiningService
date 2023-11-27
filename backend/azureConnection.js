@@ -5,10 +5,11 @@ import { BlobServiceClient, StorageSharedKeyCredential } from "@azure/storage-bl
 dotenv.config()
 const accountName = process.env.STORAGE_ACCOUNT
 const accountKey = process.env.STORAGE_SHARED_KEY
+const container = process.env.CONTAINER
 
 const sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
 const blobServiceClient = new BlobServiceClient(`https://${accountName}.blob.core.windows.net`, sharedKeyCredential);
-const container = process.env.CONTAINER
+
 const BUFFER = path.resolve(__dirname + "/../storage/buffer")
 const containerClient = blobServiceClient.getContainerClient(container);
 export async function uploadFileToBlob(fileName, filePath) {
@@ -33,6 +34,7 @@ export async function getBlob(blobName) {
         console.log(`Blob "${blobName}" downloaded successfully as "${bufferPath}".`);
      
     } catch (error) {
+        console.log("Error at getBlob")
         throw error;
     }
 }

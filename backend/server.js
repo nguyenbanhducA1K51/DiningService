@@ -23,8 +23,6 @@ app.use('/api/dining', diningRoute)
 if (process.env.NODE_ENV === "production") {
 
     const rootpath = path.resolve(path.dirname(__dirname))
-    console.log("Dir", rootpath)
-    console.log(path.join(rootpath, "frontend/dist"))
     app.use(express.static(path.join(rootpath, "frontend/dist")))
      
     app.get('*', (req, res) => {
@@ -44,3 +42,5 @@ app.use(errorHandler)
  app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
+
+export default app
