@@ -37,11 +37,12 @@ jobs:
           # key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            ls -al
+            ls 
             whoami
             cd ~/repo/DiningService
+            pwd
+            ls
             git pull origin master
-            npm -v
             npm install 
             npm install --prefix frontend
             pm2 start npm --name"dining" -- run server  
