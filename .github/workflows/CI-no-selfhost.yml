@@ -18,7 +18,7 @@ jobs:
           - name: 'Create env file'
             run: |
               echo "${{ secrets.ENV_FILE }}" > .env
-          - run: npm install
-          - run: npm install backend
+          - run: npm install  backend
+          - run: npm install frontend
           - run: npm run build --if-present
           - run: npm test

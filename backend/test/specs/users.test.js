@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
+// const puppeteer = require('puppeteer');
 import { isTokenCredential } from '@azure/core-auth';
 import dotenv from 'dotenv'
-import app from "../../backend/server"
+import app from "../../server"
 const request=require("supertest")
 dotenv.config()
 const baseURL= `http://localhost:${process.env.PORT}`
