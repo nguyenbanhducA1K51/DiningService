@@ -1,7 +1,7 @@
 name: CI
 on:
     push:
-        branches: [ master ]   
+        branches: [ master,dev ]   
     workflow_dispatch:
 jobs:
     test:
@@ -35,7 +35,6 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          # port: ${{ secrets.SSH_PORT }}
           script: |
             
             cd ~/repo/DiningService
