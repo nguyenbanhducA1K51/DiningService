@@ -37,11 +37,9 @@ jobs:
           # key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            ls 
-            whoami
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
             cd ~/repo/DiningService
-            pwd
-            ls
             git pull origin master
             npm install 
             npm install --prefix frontend
