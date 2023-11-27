@@ -30,7 +30,7 @@ jobs:
       environment:  diningProduction 
       steps:
       - name: SSH and deploy node app
-        uses: appleboy/sssh-action@master
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
