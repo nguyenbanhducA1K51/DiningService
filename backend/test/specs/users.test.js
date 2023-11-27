@@ -35,5 +35,10 @@ describe("POST /api/users/auth", () => {
     })
 
 })
+afterAll(done => {
+    // THIS IS HOW YOU CLOSE CONNECTION IN MONGOOSE (mongodb ORM)
+    app.close();
+    done();
+});
 
 
