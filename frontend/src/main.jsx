@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
+ import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {
   createBrowserRouter,
@@ -17,6 +18,7 @@ import { Provider } from 'react-redux'
 import PrivateRoute from './components/PrivateRoute.jsx'
 import "./style.css"
 import AdminScreen from './screens/AdminScreen.jsx'
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>

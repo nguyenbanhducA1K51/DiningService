@@ -4,7 +4,6 @@ import { selectWeekMenu } from "./menuSlice";
 import { useSelector, useDispatch } from 'react-redux'
 import { getWeekDays } from "../helper/calculateDay";
 
-
 const initialState = {
     anchorDate: null,
     images:{},
@@ -34,39 +33,39 @@ export const selectUserKeyword = state => {
 }
 export const selectUserWeekRating = state => state.clientMenu.userWeekRating 
 export const selectWeekRating = state => state.clientMenu.weekRating
-export const selectClientImages=state=>state.clientMenu.images
-export const fetchUserKeyword = createAsyncThunk(
-    "clientMenu/fetchUserKeyword", async (data) => {
-        try {
-            const params = data
-            const res = await axios.get(FETCH_KEYWORD_USER, { params })
-            // console.log("client fetch user keyword", res.data)
-            return res.data
-        } catch (error) {
-            if (!error.response) {
-                throw error
-            }
-            console.log("error", error.response.data.message)
-            state.error = error.response.data.message
-        }
-    }
-)
+export const selectClientImages = state => state.clientMenu.images
 export const selectClientWeekMenu = state => {
     return state.clientMenu.weekdata
 }
 export const selectClientWeekKeyword = state => {
     return state.clientMenu.weekKeyword
 }
+
 export const defaultLogin = state => {
     "clientMenu/defaultLogin", async (data) => {
         try {
-            const res=await axios.post( DEFAULT_LOGIN,data)
+            const res = await axios.post(DEFAULT_LOGIN, data)
             return res
         } catch (error) {
-            console.log("error from default login",error)
+            console.log("error from default login", error)
         }
     }
 }
+
+export const fetchUserKeyword = createAsyncThunk(
+    "clientMenu/fetchUserKeyword", async (data) => {
+        try {
+            const params = data
+            const res = await axios.get(FETCH_KEYWORD_USER, { params })
+           
+            return res.data
+        } catch (error) {
+            console.log("Error fetchUserKeyword::", error)
+            throw new Error (" Error getting keywords")
+        }
+    }
+)
+
 export const fetchMenu = createAsyncThunk(
     "clientMenu/fetchMenu", async (data) => {
         try {
@@ -74,11 +73,8 @@ export const fetchMenu = createAsyncThunk(
             const res = await axios.get(FETCH_MENU_API, { params })
             return res.data
         } catch (error) {
-            if (!error.response) {
-                throw error
-            }
-            console.log("full error", error)
-            state.error = error.response.data.message
+            console.log("Error fetchMenu ::",error)
+            throw new Error ("Error fetch menu")
         }
     }
 )
@@ -88,12 +84,9 @@ export const fetchRating = createAsyncThunk(
             const params = data
             const res = await axios.get(FETCH_RATING, { params })
             return res.data
-        } catch (error) {
-            if (!error.response ||!error.response.data) {
-                throw error
-            }
-            console.log("error", error.response.data.message)
-            state.error = error.response.data.message
+        } catch (error) {   
+            console.log("Error fetchRating", error)
+            throw new Error( "Failed to fetch Ratings")
         }
     }
 )
@@ -102,29 +95,23 @@ export const fetchKeyword = createAsyncThunk(
         try {
             const params = data
             const res = await axios.get(FETCH_KEYWORD, { params })
-            // console.log("client fetch keyword",res.data)
             return res.data
-        } catch (error) {
-            if (!error.response) {
-                throw error
-            }
-            console.log("error", error.response.data.message)
-            state.error = error.response.data.message
+        } catch (error) {      
+            console.log("Error fetch Keywords ::", error)
+            throw new Error("Error fetch keyword")
         }
     }
 )
 export const postKeyword = createAsyncThunk(
     "clientMenu/postKeyword", async (data) => {
+        console.log("data::",data);
+        
         try {
             const res = await axios.post(POST_KEYWORD, data)
             return res.data
         } catch (error) {
-            if (!error.response) {
-                throw error
-            }
-
-            console.log("error", error.response.data.message)
-            state.error = error.response.data.message
+            console.log("Error post Keywords ::", error)
+            throw new Error("Error post keyword")
         }
     }
 )
@@ -134,11 +121,8 @@ export const postRating = createAsyncThunk(
             const res = await axios.post(POST_RATING, data)
             return res.data
         } catch (error) {
-            if (!error.response||! error.response.data) {
-                throw error
-            }
-            console.log("error", error.response.data.message)
-            state.error = error.response.data.message
+            console.log("Error post Rating::", error)
+            throw new Error("Error post Rating")
         }
     }
 )
@@ -173,7 +157,6 @@ const clientMenuSlice = createSlice({
                 state.weekdata = action.payload.menu 
                 state.images=action.payload.images
                 
-
             })
             .addCase(fetchKeyword.fulfilled, (state, action) => {
                 
@@ -187,7 +170,29 @@ const clientMenuSlice = createSlice({
             .addCase(fetchRating.fulfilled, (state,action)=> {
                 state.weekRating = action.payload.rating 
                 state.userWeekRating=action.payload.userRating 
-        })
+        
+        
+            })
+        
+        
+            .addCase(fetchUserKeyword.rejected, (state, action) => {           
+                state.error = action.error.message
+            })
+            .addCase(fetchMenu.rejected, (state, action) => {
+                state.error = action.error.message
+            })
+            .addCase(fetchRating.rejected, (state, action) => {
+                state.error = action.error.message
+            })
+            .addCase(fetchKeyword.rejected, (state, action) => {
+                state.error = action.error.message
+            })
+            .addCase(postRating.rejected, (state, action) => {
+                state.error = action.error.message
+            })
+            .addCase(postKeyword.rejected, (state, action) => {
+                state.error = action.error.message
+            })
     }
 
 

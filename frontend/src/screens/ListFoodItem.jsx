@@ -61,9 +61,8 @@ const ListFoodItem = () => {
     }
     return (
         <>
-            {console.log(foodItems)
+           
             
-           }
             <div className="mt-4">
                 {display()}
             </div>

@@ -7,10 +7,10 @@ import { postMenu, getMenu } from "../controllers/MenuController"
 import { getRating, postRating } from "../controllers/RatingControlller"
 import { getKeywords, postKeyWords,getKeywordsByUser } from "../controllers/KeywordController"
 const router = express.Router()
-const BUFFER  = path.resolve(path.join(__dirname, "../../storage/buffer"))
+const IMG_STORE  = path.resolve(path.join(__dirname, "../../storage/image"))
 const foodImageStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, BUFFER)
+        cb(null, IMG_STORE)
 
     },
     filename: (req, file, cb) => {

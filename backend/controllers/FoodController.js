@@ -1,13 +1,14 @@
 import asyncHandler from "express-async-handler"
 import { Food } from "../models/foodModel"
 import { dailyFood } from "../models/dailyFoodModel"
+import { encodeImage } from "../utils/images"
 import mongoose from "mongoose"
 import path from "path"
 import dotenv from 'dotenv'
+const IMG_STORE = path.resolve(__dirname + "/../../storage/image")
 import fs from "fs"
-import { encodeImage,uploadFileToBlob, cleanBuffer, getBlob,deleteBlob } from "../azureConnection"
 dotenv.config()
-const BUFFER = path.resolve(__dirname + "/../../storage/buffer")
+
 const getFood = asyncHandler(async (req, res) => {
   try {
     const docs = await Food.find({}).exec()
@@ -15,12 +16,10 @@ const getFood = asyncHandler(async (req, res) => {
     for (let i = 0; i < docs.length; i++) {
       const iden = docs[i]["fileIden"] 
       const id = docs[i]["_id"]
-      images[id]=await encodeImage(iden )
-      
+      images[id] = encodeImage(iden)
     }
-    // console.log("im",images)
     res.status(201).json({ foodList: docs, images: images })
-    cleanBuffer()
+
   } catch (error) {
     console.log(error)
     return res.status(400)
@@ -63,7 +62,7 @@ try {
   const deletedRecord = await Food.findOneAndRemove({ _id: object_id });
   if (deletedRecord) {
 
-    await deleteBlob(deletedRecord["fileIden"])
+   
     const deletedDailyItem = await dailyFood.deleteMany({ foodId: object_id })
 
     res.status(200).json({ message: "Deleted item" });
@@ -92,8 +91,8 @@ const createFood = asyncHandler(async (req, res) => {
       console.log("file is null")
       return req.status(404).json({ message: "image is empty" })
     }
-    const savePath = path.join(BUFFER, fileIden)
-    const upImageRes = await uploadFileToBlob(fileIden, savePath)
+    const savePath = path.join(IMG_STORE, fileIden)
+    
   
     const foodExist = await Food.findOne({ name })
     if (foodExist) {
@@ -109,7 +108,7 @@ const createFood = asyncHandler(async (req, res) => {
     })
 
     res.status(201).json({ "_id": item._id })
-    cleanBuffer()
+  
   } catch (error) {
     console.log(error)
     return res.status(400).json({ message: "cannot create item, try again later" })

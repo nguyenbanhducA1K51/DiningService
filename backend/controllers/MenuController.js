@@ -4,9 +4,7 @@ import path from "path"
 import { dailyFood } from "../models/dailyFoodModel"
 import { Food } from "../models/foodModel"
 import { getWeekFromDate } from "../utils/dateUtils"
-import { cleanBuffer, getBlob,encodeImage } from "../azureConnection"
-import fs from "fs";
-const BUFFER = path.resolve(__dirname + "/../../storage/buffer")
+import { encodeImage } from "../utils/images"
 const getMenu = asyncHandler(async (req, res) => {
 
     const date = req.query.date
@@ -31,7 +29,7 @@ try {
                     
                         const fileIden= foodRecord["fileIden"]
                         const _id = foodRecord._id
-                       images[_id]= await encodeImage(fileIden)
+                       images[_id]=  encodeImage(fileIden)
                     }
                 }
 

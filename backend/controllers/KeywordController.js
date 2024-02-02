@@ -10,7 +10,7 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
         const {user}=req
         const { anchorDate } = req.query
         if (!anchorDate) {
-            res.status(500).json({ message: "Missing  anchor Date " })
+            return res.status(500).json({ message: "Missing  anchor Date " })
 
         }
         const dates = getWeekFromDate(anchorDate)
@@ -94,10 +94,11 @@ export const postKeyWords = asyncHandler(async (req, res) => {
     
 })
 export const getKeywords = asyncHandler(async (req, res) => {
-try {
+    try {
+    console.log("req::",req)
     const { anchorDate } = req.query
     if (!anchorDate) {
-        res.status(500).json({ message: "Missing  anchor Date " })
+       return res.status(500).json({ message: "Missing  anchor Date " })
 
     }
     const dates = getWeekFromDate(anchorDate)

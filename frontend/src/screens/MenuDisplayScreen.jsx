@@ -11,8 +11,8 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { format, parse } from 'date-fns'
 import { reduceToFullDate } from "../helper/calculateDay";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPizzaSlice } from '@fortawesome/free-solid-svg-icons';
+import { CardFood } from "../components/menu/card-food";
 
 const MenuDisplayScreen = () => {
 
@@ -21,7 +21,6 @@ const MenuDisplayScreen = () => {
     const images=useSelector(selectClientImages)
     const weekKeyword = useSelector(selectClientWeekKeyword)
     const anchorDate = useSelector(selectAnchor)
-    const imgSource = "/image/imagestorage/"
     const dispatch = useDispatch()
     const clientMenu = useSelector(selectClientWeekMenu)
     const [error, setError] = useState("")
@@ -36,8 +35,6 @@ const MenuDisplayScreen = () => {
     const [calendarVisible, setCalendarVisible] = useState(false);
     const [dateCalendar, setDateCalendar] = useState(null)
     const calendarRef = useRef(null);
-
-    const [rating, setRating] = useState(10)
 
     const DEFAULT_DATE = "2023-10-25"
     const toggleCalendar = () => {
@@ -100,9 +97,7 @@ const MenuDisplayScreen = () => {
             dispatch(fetchKeyword({ anchorDate: anchorDate }))
             dispatch(fetchUserKeyword({ anchorDate: anchorDate }))
             dispatch(fetchRating({ date: anchorDate }))
-
         }
-
     }, [anchorDate])
 
     useEffect(() => {
@@ -179,82 +174,32 @@ const MenuDisplayScreen = () => {
         )
 
     }
-    const renderFoodCard = (day, dailymenu, id, index) => {
-    
-     
+    const renderFoodCard = (date, dailymenu, id,index) => {
         if (dailymenu && dailymenu[id]) {
-          
             const foodId = dailymenu[id]["_id"]
+            const name = dailymenu[id].name
             const imageData = images[foodId]["data"]
             const extend = images[foodId]["type"]
-        
-       
-            const img_bg = {
-                background: `url(data: ${ extend }; base64, ${ imageData })`,
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat',
-                aspectRatio: '1 / 1'
-            }
-
+            const keywords = weekKeyword[date]?.[id]
+            const userKeywords = dataUserkeywords[date]?.[id]
+            
+            console.log("log ::", date, foodId, userKeywords)
             return (
-
-                <div id={index} className="card col-md-2  child-card relcontainer" >
-                    <div className="background-image">
-
-                    <img src={`data: ${extend};base64, ${imageData}`} className ="backgroundimage"alt="" /> <img/>
-                    </div>
-                    <div className="foreground d-flex justify-content-between flex-column">
-
-                        <div className=" foreground card-body d-flex justify-content-between flex-column p-1">
-                        <div className="d-flex justify-content-center title-div" >
-
-                            <span className=""> {dailymenu[id].name}</span>
-                        </div>
-
-                        </div>
-                        
-                    <div className="row d-flex justify-content-around">
-                        {weekKeyword[day] && weekKeyword[day][id] ? renderKeywords(weekKeyword[day][id]) : null}
-                    </div>
-                        <div className="m-1 d-flex ">
-
-                        <div className="white-back">
-
-                            <FontAwesomeIcon icon={faPizzaSlice} size="1x" className="rounded-image"
-                                alt=""
-                                onClick={(e) => {
-                                    handleShow(day, id);
-                                    setFoodId(id)
-                                    setDate(day)
-
-                                    displayRatingAndKeyword(day, id)
-
-                                }} />
-                        </div>
-
-
-                    </div>
-                    
-                    </div>
-
-                </div>
-
+                <CardFood key={ index} prop={{extend, imageData, name, keywords,date,foodId,userKeywords}} />
             );
         } else {
-            return null;
+            return <></>;
         }
 
     }
 
     const DailyMenu = (day, dailymenu) => {
-
-
         return (
 
             <>
                 <span className="bold-text"> {dateToWeekDay(day)} {day}</span>
                 <div className="row parent-card d-flex justify-content-around" >
-                    {Object.keys(dailymenu).map((id, index) => (
+                    {Object.keys(dailymenu).map((id, index) => (                     
                         renderFoodCard(day, dailymenu, id, index)
                     ))}
                 </div>
@@ -287,17 +232,8 @@ const MenuDisplayScreen = () => {
                 </Modal.Header>
                 <Modal.Body>
                     <span className="mb-1 small" >Remember to add your keywords before update </span>
-                    {/* <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Rating</span>
-                        </div>
-                        <input id="rating" type="number" class="form-control" placeholder="Give a number from 0 to 10"  aria-describedby="basic-addon1"/>
-                    </div> */}
-
+                   
                     <div className="input-group mb-3">
-
-
-
                         <input id='keywordInput' type="text" className="form-control" placeholder="Add your keyword" aria-label="keyword" aria-describedby="basic-addon2" />
                         <div className="input-group-append">
                             <button className="btn btn-outline-secondary" type="button" onClick={e => { addKeyword() }} >Add </button>
@@ -318,7 +254,7 @@ const MenuDisplayScreen = () => {
                 <Modal.Footer >
                     <div className="d-flex flex-column ">
 
-                        <span className="mb-1" >For display convenient it only display 6 keywords at maximum</span>
+                        <span className="text-xs" >For display convenient it only display 6 keywords at maximum</span>
                         <div className="d-flex justify-content-between">
                             <button className="btn btn-dark" onClick={e => { updateKeywords() }}>Update</button>
                             <button className="btn btn-outline-secondary" onClick={displayFullKeyword} >Full Keyword</button>

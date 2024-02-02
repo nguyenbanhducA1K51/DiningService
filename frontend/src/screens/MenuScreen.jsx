@@ -68,7 +68,6 @@ const MenuScreen = () => {
 
     useEffect(() => {
         if (anchorDate) {
-            console.log(" anchordate change")
             setDate(reduceToFullDate(anchorDate))
             dispatch(fetchWeekMenu({ date: anchorDate }))
         }

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from "axios"
+// import { axiosRequest} from "../helper/Request";
 const initialState = {
     foodList: [],
     status: "iddle",
@@ -13,27 +14,24 @@ const DELETE_ITEM = `${FOOD_API}/delone`
 const DELETE_ALL=`${FOOD_API}/delall`
 export const fetchItems = createAsyncThunk(
     'foodItem/fetchItems', async () => {
-        const res = await axios.get(FETCH_ITEM)
-    
-        return res.data
+        try {        
+            const res = await axios.get(FETCH_ITEM)
+            // const res=await request("GET",FETCH_ITEM,null,null)
+            return res.data
+        } catch (error) {
+            throw new Error("Error fetchItems")
+        }
     }
 )
 
 export const createItem = createAsyncThunk(
     'foodItem/createItem', async (data, { rejectWithValue }) => {
         try {
-            const res = await axios.post(CREATE_ITEM, data)
+            // const res = await request("POST",CREATE_ITEM,null,data)
+                await axios.post(CREATE_ITEM, data)
         } catch (error) {
-            console.log(error)
-            if (!err.response || !err.response.data) {
-                throw err
-            }
-            else if (error.request) {
-                // The request was made, but there was no response
-                console.error('No Response:', error.request);
-            }
-
-            state.error = error.response.data.message
+            console.log("Error createItem ::", error)
+            throw new Error("Error create Item")
         }
         
 
