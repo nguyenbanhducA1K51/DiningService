@@ -64,7 +64,7 @@ export const postRating = asyncHandler(async (req, res) => {
     
     const { user } = req
     let { rating, date, foodId } = req.body
-    console.log("post rating body ", req.body)
+   
     rating=parseInt(rating)
     if (!rating || !date || !foodId) {
        return res.status(404).json({ message: "Missing either rating or date or foodItem field" })

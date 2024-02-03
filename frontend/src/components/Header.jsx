@@ -61,17 +61,7 @@ const Header = () => {
 
 
 
-                                    {isAuthorized()  ?
-                                        <>
-                                            <LinkContainer to="/admin">
-                    
-                                                <NavDropdown.Item>
-                                                    Admin
-                                                </NavDropdown.Item>
-                                            </LinkContainer>
-                                        </> : <></>
-                                    }
-                                            
+                                       
                                    
                             
                             </NavDropdown>

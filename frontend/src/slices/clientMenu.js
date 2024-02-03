@@ -1,9 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios"
-import { selectWeekMenu } from "./menuSlice";
-import { useSelector, useDispatch } from 'react-redux'
-import { getWeekDays } from "../helper/calculateDay";
-
 const initialState = {
     anchorDate: null,
     images:{},
@@ -92,7 +88,9 @@ export const fetchRating = createAsyncThunk(
 )
 export const fetchKeyword = createAsyncThunk(
     "clientMenu/fetchKeyword", async (data) => {
+        
         try {
+          
             const params = data
             const res = await axios.get(FETCH_KEYWORD, { params })
             return res.data
@@ -134,6 +132,9 @@ const clientMenuSlice = createSlice({
     name: "clientMenu",
     initialState,
     reducers: {
+        resetError: (state, action) => {
+            state.error = "";
+        },
         setAnchorDate: (state, action) => {
             if (!action.payload) {
                 state.error = "expect payload to be nonempty"
@@ -144,8 +145,6 @@ const clientMenuSlice = createSlice({
                 anchorDate = new Date().toISOString().slice(0, 10)
             }
             state.anchorDate = anchorDate
-
-
         },
         
 
@@ -159,19 +158,18 @@ const clientMenuSlice = createSlice({
                 
             })
             .addCase(fetchKeyword.fulfilled, (state, action) => {
-                
+                console.log("week::", action.payload)
                 state.weekKeyword=action.payload
                
             })
             .addCase(fetchUserKeyword.fulfilled, (state, action) => {
-               state.userWeekKeyword=action.payload
+                console.log("user::", action.payload)
+                state.userWeekKeyword = action.payload
 
             })
             .addCase(fetchRating.fulfilled, (state,action)=> {
                 state.weekRating = action.payload.rating 
                 state.userWeekRating=action.payload.userRating 
-        
-        
             })
         
         
@@ -191,6 +189,7 @@ const clientMenuSlice = createSlice({
                 state.error = action.error.message
             })
             .addCase(postKeyword.rejected, (state, action) => {
+               
                 state.error = action.error.message
             })
     }
@@ -198,5 +197,5 @@ const clientMenuSlice = createSlice({
 
 
 })
-export const { setAnchorDate, setKeyword, addKeyword } = clientMenuSlice.actions
+export const { setAnchorDate, setKeyword, addKeyword,resetError } = clientMenuSlice.actions
 export default clientMenuSlice.reducer

@@ -4,7 +4,7 @@ import generateToken from '../utils/generateToken.js'
 
 const defaultUser = asyncHandler(async(req, res)=> {
     const { role } = req.body
-    console.log(req.body,role)
+    
     if (role != "admin" && role != "user") {
         return res.status(500).json({message: "Role can only be admin or user "})
     }
@@ -22,7 +22,6 @@ const defaultUser = asyncHandler(async(req, res)=> {
     }
     else {
         const user = await User.findOne({ email:"A@gmail.com"})
-            console.log("user",user)
             generateToken(res, user._id)
             res.status(201).json({
                 _id: user._id,

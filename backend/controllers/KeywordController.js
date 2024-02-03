@@ -5,12 +5,12 @@ import { dailyFood } from "../models/dailyFoodModel"
 import mongoose from "mongoose"
 import { getWeekFromDate } from "../utils/dateUtils"
 export const getKeywordsByUser = asyncHandler(async (req, res) => {
-    try {
+ 
        
         const {user}=req
         const { anchorDate } = req.query
         if (!anchorDate) {
-            return res.status(500).json({ message: "Missing  anchor Date " })
+            return res.status(400).json({ message: "Missing  anchor Date " })
 
         }
         const dates = getWeekFromDate(anchorDate)
@@ -43,23 +43,24 @@ export const getKeywordsByUser = asyncHandler(async (req, res) => {
         }
     
         return res.status(201).json(data)
-    } catch (error) {
-        console.log("sys error", error)
-        res.status(500)
-    }
+   
     
 })
 export const postKeyWords = asyncHandler(async (req, res) => {
     const { user } = req
-
+console.log("go post", req.body)
     let { date, food_id, keywords } = req.body
 
     if (!date || !food_id || !keywords) {
-        return res.status(404).json({ message: "Missing either date or food id" })
+        console.log('go1');
+        
+        return res.status(400).json({ message: "Missing either date or food id" })
 
     }
     if (!Array.isArray(keywords)) {
-        return res.status(404).json({ message: "param keywords must be an array" })
+        console.log('go2');
+        
+        return res.status(400).json({ message: "param keywords must be an array" })
     }
     
 
@@ -78,7 +79,6 @@ export const postKeyWords = asyncHandler(async (req, res) => {
         user: user._id,
         dailyFoodId: dailyFoodRecord._id
     })
-    //  console.log("delete keyword:", existKeywordRecord)
     if (keywords.length > 0) {
         const keywordRecord = await Keyword.create({
             user: user._id,
@@ -95,7 +95,7 @@ export const postKeyWords = asyncHandler(async (req, res) => {
 })
 export const getKeywords = asyncHandler(async (req, res) => {
     try {
-    console.log("req::",req)
+  
     const { anchorDate } = req.query
     if (!anchorDate) {
        return res.status(500).json({ message: "Missing  anchor Date " })

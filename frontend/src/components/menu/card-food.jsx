@@ -3,47 +3,40 @@ import { CardKeyword } from "./card-keyword";
 import { faBowlFood } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { CardUserKeyword } from './card-userKeyword';
+
+
 export const CardFood = ({ prop }) => {
     const { extend, imageData, name, keywords, date, foodId, userKeywords } = prop
 
     const [modalVisible, setModalVisible] = useState(false)
+    
     return (
+       
+        <div className=" flex flex-col w-36 h-36  bg-slate-500 rounded-md" style={{ backgroundImage: `url(data:${extend};base64,${imageData})`, backgroundSize: 'cover', }}>
+            <div className=" flex justify-between flex-col items-center m-1  h-full">
+                {/* <span>go</span> */}
+                <div className="flex items-center justify-center space-x-2 ">
+                    <div className=' '>
 
-        <div className="card col-md-2  child-card relcontainer" >
-            <div className="background-image">
-
-                <img src={`data: ${extend};base64, ${imageData}`} className="backgroundimage" alt="" /> <img />
-            </div>
-            <div className="foreground d-flex justify-content-between flex-column">
-
-                <div className=" foreground card-body d-flex justify-content-between flex-column p-1">
-                    <div className="d-flex justify-content-center title-div" >
-
-                        <span className=""> {name}</span>
+                        <span className=" p-1 text-sm text-semibold bg-black text-white rounded-md"> {name}</span>
                     </div>
-
-                </div>
-
-                <div className="row d-flex justify-content-around">
-                    <CardKeyword prop={{ keywords }} />
-                </div>
-                <div className="flex items-center justify-center m-2">
-
-                    <div className="bg-white rounded-md border  border-black pr-2 pl-2 hover:transform hover:scale-110 cursor-pointer">
-
+                    <div className=" pl-1 pr-1 bg-white rounded-md border    hover:transform hover:scale-110 cursor-pointer">
                         <FontAwesomeIcon icon={faBowlFood} size="1x" className=""
                             alt=""
                             onClick={(e) => {
                                 setModalVisible(!modalVisible)
                             }}
                         />
-                        <CardUserKeyword prop={{ userKeywords, foodId, modalVisible, setModalVisible }} />
-
+                        <CardUserKeyword prop={{ userKeywords, foodId, date, modalVisible, setModalVisible }} />
                     </div>
-
-
                 </div>
 
+                <div className="flex justify-around">
+                    <CardKeyword prop={{ keywords }} />
+                </div>
+
+
+                
             </div>
 
         </div>

@@ -22,10 +22,10 @@ export const axiosRequest = (type, url,params = null, data = null) => {
 
         }
         else if (type == "GET") {
-            
             return axios.get(url, params, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`,
+                     'Content-Type': 'application/json'
                 }
             })
         }

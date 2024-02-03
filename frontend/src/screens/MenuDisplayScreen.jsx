@@ -2,16 +2,15 @@
 import { useState, useEffect, useRef } from "react"
 import { toast } from "react-toastify"
 import { useDispatch, useSelector } from "react-redux"
-import { selectClientWeekKeyword, selectAnchor, setAnchorDate, selectUserKeyword, fetchUserKeyword, selectError, selectClientWeekMenu, fetchMenu, fetchRating, fetchKeyword, postKeyword, postRating } from "../slices/clientMenu";
+import {resetError, selectClientWeekKeyword, selectAnchor, setAnchorDate, selectUserKeyword, fetchUserKeyword, selectError, selectClientWeekMenu, fetchMenu, fetchRating, fetchKeyword, postKeyword, postRating } from "../slices/clientMenu";
 import { selectUserWeekRating, selectWeekRating,selectClientImages } from "../slices/clientMenu";
 import { Modal } from 'react-bootstrap';
-import { FaTimes } from 'react-icons/fa';
 import { dateToWeekDay } from "../helper/calculateDay";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { format, parse } from 'date-fns'
 import { reduceToFullDate } from "../helper/calculateDay";
-import { faPizzaSlice } from '@fortawesome/free-solid-svg-icons';
+import { LinkContainer } from "react-router-bootstrap";
 import { CardFood } from "../components/menu/card-food";
 
 const MenuDisplayScreen = () => {
@@ -23,15 +22,10 @@ const MenuDisplayScreen = () => {
     const anchorDate = useSelector(selectAnchor)
     const dispatch = useDispatch()
     const clientMenu = useSelector(selectClientWeekMenu)
-    const [error, setError] = useState("")
-    const sliceError = useSelector(selectError)
-    const [date, setDate] = useState(null)
-    const [foodId, setFoodId] = useState(null)
-    const [showFullKeyword, setShowFullKeyword] = useState(false)
-    const [fullKeyword, setFullKeyword] = useState([])
-    const [show, setShow] = useState(false);
+   
+    const APIerror = useSelector(selectError)
+    const { userInfo } = useSelector((state) => state.auth)
     const dataUserkeywords = useSelector(selectUserKeyword)
-    const [userKeywords, setUsersKeyword] = useState([])
     const [calendarVisible, setCalendarVisible] = useState(false);
     const [dateCalendar, setDateCalendar] = useState(null)
     const calendarRef = useRef(null);
@@ -44,7 +38,13 @@ const MenuDisplayScreen = () => {
     const closeCalendar = () => {
         setCalendarVisible(false);
     };
+    const isAuthorized = () => {
 
+        if (userInfo.permission == 9) {
+            return true
+        }
+        return false
+    }
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (calendarRef.current && !calendarRef.current.contains(event.target)) {
@@ -69,26 +69,9 @@ const MenuDisplayScreen = () => {
         const formattedDate = format(calendarDate, 'yyyy-MM-dd');
 
         dispatch(setAnchorDate({ anchorDate: formattedDate }))
-
-
     }
 
-    const handleCloseFullKeyword = () => {
-        setShowFullKeyword(false)
-    }
 
-    const handleClose = () => setShow(false);
-
-    const style = {
-        fontFamily: 'Poppins, sans-serif',
-        fontSize: '16px',
-    };
-
-
-    const handleShow = (date) => {
-
-        setShow(true)
-    };
     useEffect(() => {
         if (anchorDate) {
             console.log(" anchordate change")
@@ -96,7 +79,7 @@ const MenuDisplayScreen = () => {
             dispatch(fetchMenu({ date: anchorDate }))
             dispatch(fetchKeyword({ anchorDate: anchorDate }))
             dispatch(fetchUserKeyword({ anchorDate: anchorDate }))
-            dispatch(fetchRating({ date: anchorDate }))
+            // dispatch(fetchRating({ date: anchorDate }))
         }
     }, [anchorDate])
 
@@ -108,72 +91,12 @@ const MenuDisplayScreen = () => {
 
     }, [])
     useEffect(() => {
-        if (error) {
-            toast.error(error)
-            setError("")
+        if (APIerror) {
+            toast.error(APIerror)
+            dispatch(resetError())
         }
-    }, [error])
+    }, [APIerror])
 
-
-
-    const addKeyword = () => {
-        const value = document.getElementById("keywordInput").value
-        if (value.length > 15) {
-            setError("keyword length must be less than 15 character")
-            return
-        }
-        const duplicateKeyword = userKeywords.filter(key => { return key == value })
-        if (duplicateKeyword.length > 0) {
-
-            setError("key word exist!")
-            return
-        }
-        const newKeywordList = value.length > 0 ? [...userKeywords, value] : userKeywords
-        setUsersKeyword(newKeywordList)
-        document.getElementById("keywordInput").value = ""
-
-
-    }
-    const updateKeywords = () => {
-        dispatch(postKeyword({ date: date, food_id: foodId, keywords: userKeywords }))
-        
-        setError(sliceError)
-        if (!error) {
-            toast.success("updated ! reload to see your keywords")
-        }
-
-
-    }
-    const removeKeyword = (keyword) => {
-        const filter = userKeywords.filter(key => {
-            return key != keyword
-        })
-        setUsersKeyword(filter)
-    }
-    const renderKeywords = (keywords) => {
-
-        let displaykeywords = []
-        if (!Array.isArray(keywords)) {
-            displaykeywords = [keywords]
-        }
-        else {
-            displaykeywords = keywords
-        }
-        //  to prevent overflow. we will only display limit number of keyword
-        const reduceKeywords = displaykeywords.slice(0, 6)
-        return (
-            <>
-                <div className="row d-flex m-2">
-                    {reduceKeywords.map((key, index) => (
-                        <div id={index} className="col-md-3 card p-1 m-1">
-                            <span className="text-keyword">{key}</span>
-                        </div>
-                    ))}
-                </div>
-            </>
-        )
-
-    }
     const renderFoodCard = (date, dailymenu, id,index) => {
         if (dailymenu && dailymenu[id]) {
             const foodId = dailymenu[id]["_id"]
@@ -183,8 +106,8 @@ const MenuDisplayScreen = () => {
             const keywords = weekKeyword[date]?.[id]
             const userKeywords = dataUserkeywords[date]?.[id]
             
-            console.log("log ::", date, foodId, userKeywords)
             return (
+              
                 <CardFood key={ index} prop={{extend, imageData, name, keywords,date,foodId,userKeywords}} />
             );
         } else {
@@ -195,10 +118,9 @@ const MenuDisplayScreen = () => {
 
     const DailyMenu = (day, dailymenu) => {
         return (
-
             <>
                 <span className="bold-text"> {dateToWeekDay(day)} {day}</span>
-                <div className="row parent-card d-flex justify-content-around" >
+                <div className="m-2 flex flex-wrap items-center space-x-4 justify-center space-y-2" >
                     {Object.keys(dailymenu).map((id, index) => (                     
                         renderFoodCard(day, dailymenu, id, index)
                     ))}
@@ -208,92 +130,8 @@ const MenuDisplayScreen = () => {
             </>
         )
     }
-    const displayFullKeyword = () => {
-        setFullKeyword(userKeywords)
-        setShowFullKeyword(true)
-        handleClose()
-    }
-    const displayRatingAndKeyword = (date, id) => {
-        if (dataUserkeywords[date][id]) {
-
-            setUsersKeyword(dataUserkeywords[date][id])
-        }
-        else {
-            setUsersKeyword([])
-        }
-
-    }
-    const RatingAndKeyword = () => {
-
-        return (
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Rating</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <span className="mb-1 small" >Remember to add your keywords before update </span>
-                   
-                    <div className="input-group mb-3">
-                        <input id='keywordInput' type="text" className="form-control" placeholder="Add your keyword" aria-label="keyword" aria-describedby="basic-addon2" />
-                        <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" type="button" onClick={e => { addKeyword() }} >Add </button>
-                        </div>
-                    </div>
-                    <div className="row  d-flex justify-content-around">
-                        {userKeywords.slice(0, 6).map((key, index) => (
-                            <div id={index} className="col-md-4 m-3 d-flex justify-content-between align-items-center containerStyle">
-                                <span>{key}</span>
-                                <button type="button" className="btn btn-link clickable-x " onClick={e => removeKeyword(key)} >
-                                    <FaTimes size={20} className="iconStyle" />
-                                </button>
-                            </div>
-                        ))}
-
-                    </div>
-                </Modal.Body>
-                <Modal.Footer >
-                    <div className="d-flex flex-column ">
-
-                        <span className="text-xs" >For display convenient it only display 6 keywords at maximum</span>
-                        <div className="d-flex justify-content-between">
-                            <button className="btn btn-dark" onClick={e => { updateKeywords() }}>Update</button>
-                            <button className="btn btn-outline-secondary" onClick={displayFullKeyword} >Full Keyword</button>
-                        </div>
-                    </div>
-
-                </Modal.Footer>
-            </Modal>
-        )
-    }
-    const FloatFullKeyword = () => {
-
-        return (
-            <>
-
-                <Modal show={showFullKeyword} onHide={handleCloseFullKeyword}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Full keywords </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-
-                        <div className="row  d-flex justify-content-around">
-                            {fullKeyword ? fullKeyword.map((key, index) => (
-                                <div id={index} className="col-md-4 m-3 d-flex justify-content-between align-items-center containerStyle">
-                                    <span>{key}</span>
-
-                                </div>
-                            )) : null}
-
-                        </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-
-                    </Modal.Footer>
-                </Modal>
-
-            </>
-        )
-    }
+   
+    
 
 
     const CalendarComponent = () => {
@@ -332,22 +170,34 @@ const MenuDisplayScreen = () => {
     return (
         <>
             
-        
-            <RatingAndKeyword />
-            <FloatFullKeyword />
+
             <CalendarComponent />
+          
             
-            <div className="py-5 " style={style}>
+            <div className="py-5 " >
+
+
+                <div className="flex justify-between">
+
                 <div className="d-flex  m-3">
                     <button onClick={e => toggleCalendar()} className="btn btn-dark">Show Calendar</button>
 
                 </div>
+                    {isAuthorized ?
+
+                        <LinkContainer to="/admin">
+
+                            <button className="btn btn-outline-dark ">Admin Page</button>
+                        </LinkContainer>
+                        : <></>}
+                </div>
+                
                 <div className="container">
 
                     <div className="menu ">
                         {
                             Object.keys(clientMenu).map((day, index) => (
-                                <div id={index} className="mt-3 ">
+                                <div key={ index}  className="mt-3 ">
                                     {DailyMenu(day, clientMenu[day])}
 
                                 </div>

@@ -35,9 +35,7 @@ else {
     app.get('/', (req, res) => {
         res.send("ready");
     });
-
 }
-
 app.use(notFound);
 app.use(errorHandler)
 

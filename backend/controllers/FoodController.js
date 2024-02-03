@@ -10,7 +10,7 @@ import fs from "fs"
 dotenv.config()
 
 const getFood = asyncHandler(async (req, res) => {
-  try {
+
     const docs = await Food.find({}).exec()
     let images = {}
     for (let i = 0; i < docs.length; i++) {
@@ -20,10 +20,7 @@ const getFood = asyncHandler(async (req, res) => {
     }
     res.status(201).json({ foodList: docs, images: images })
 
-  } catch (error) {
-    console.log(error)
-    return res.status(400)
-  }
+ 
 })
 const delAll = asyncHandler(async (req, res) => {
   const user = req.user
