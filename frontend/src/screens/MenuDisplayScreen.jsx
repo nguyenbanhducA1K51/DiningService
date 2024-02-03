@@ -4,15 +4,15 @@ import { toast } from "react-toastify"
 import { useDispatch, useSelector } from "react-redux"
 import {resetError, selectClientWeekKeyword, selectAnchor, setAnchorDate, selectUserKeyword, fetchUserKeyword, selectError, selectClientWeekMenu, fetchMenu, fetchRating, fetchKeyword, postKeyword, postRating } from "../slices/clientMenu";
 import { selectUserWeekRating, selectWeekRating,selectClientImages } from "../slices/clientMenu";
-import { Modal } from 'react-bootstrap';
 import { dateToWeekDay } from "../helper/calculateDay";
-import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { format, parse } from 'date-fns'
 import { reduceToFullDate } from "../helper/calculateDay";
 import { LinkContainer } from "react-router-bootstrap";
 import { CardFood } from "../components/menu/card-food";
+import { CustomCalendar } from "../components/calendar";
 
+import { ClickOutsideComponent } from "../components/ClickOutsideComponent";
 const MenuDisplayScreen = () => {
 
     const userDataRating = useSelector(selectUserWeekRating)
@@ -28,15 +28,9 @@ const MenuDisplayScreen = () => {
     const dataUserkeywords = useSelector(selectUserKeyword)
     const [calendarVisible, setCalendarVisible] = useState(false);
     const [dateCalendar, setDateCalendar] = useState(null)
-    const calendarRef = useRef(null);
     const DEFAULT_DATE = "2023-10-25"
-    const toggleCalendar = () => {
-        setCalendarVisible(!calendarVisible);
-    };
-
-    const closeCalendar = () => {
-        setCalendarVisible(false);
-    };
+ 
+   
     const isAuthorized = () => {
 
         if (userInfo.permission == 9) {
@@ -44,29 +38,11 @@ const MenuDisplayScreen = () => {
         }
         return false
     }
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (calendarRef.current && !calendarRef.current.contains(event.target)) {
-                closeCalendar();
-            }
-        };
-
-        if (calendarVisible) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [calendarVisible]);
+    
 
     const updateAnchorDate = (calendarDate) => {
-
-        closeCalendar()
+        setCalendarVisible(false)
         const formattedDate = format(calendarDate, 'yyyy-MM-dd');
-
         dispatch(setAnchorDate({ anchorDate: formattedDate }))
     }
 
@@ -82,13 +58,13 @@ const MenuDisplayScreen = () => {
             console.log(" anchordate change")
             setDateCalendar(reduceToFullDate(anchorDate))
             updateKeywords()
-            updateMenu()
+            updateMenu()     
            
-            
         }
     }, [anchorDate])
 
     useEffect(() => {
+        dispatch(setAnchorDate({ anchorDate: DEFAULT_DATE }))
         dispatch(fetchMenu({ date: DEFAULT_DATE }))
         dispatch(fetchKeyword({ anchorDate: DEFAULT_DATE }))
         dispatch(fetchUserKeyword({ anchorDate: DEFAULT_DATE }))
@@ -135,65 +111,33 @@ const MenuDisplayScreen = () => {
             </>
         )
     }
-   
     
-
-
-    const CalendarComponent = () => {
-        return (
-            <div className="col d-flex flex-column justify-content-center align-items-center" style={{
-                position: 'relative'
-            }}>
-
-                <div>
-
-                    {calendarVisible && (
-                        <div
-                            ref={calendarRef}
-                            style={{
-                                display: "inline-block",
-                                position: 'absolute',
-                                top: '0',
-                                left: '0',
-                                maxWidth: 'unset',
-                                zIndex: 1000,
-                            }}
-                        >
-                            <Calendar
-                                onChange={updateAnchorDate}
-
-                                value={dateCalendar}
-                            />
-                        </div>
-                    )}
-                </div>
-
-
-            </div>
-        )
-    }
     return (
         <>
-            
-
-            <CalendarComponent />
           
-            
+            {calendarVisible && (
+                <ClickOutsideComponent onClose={ e=>{setCalendarVisible(false)}}>
+                  {/* <CalendarComponent/>
+                   */}
+                    <CustomCalendar prop={ {dateCalendar,updateAnchorDate}} />
+                </ClickOutsideComponent>
+            )}
+                   
             <div className="py-5 " >
-
-
                 <div className="flex justify-between">
 
                 <div className="d-flex  m-3">
-                    <button onClick={e => toggleCalendar()} className="btn btn-dark">Show Calendar</button>
+                        <button onClick={e => setCalendarVisible(true)} className="btn btn-dark">Show Calendar</button>
 
-                </div>
+                    </div>
+                    
                     {isAuthorized ()?
 
                         <LinkContainer to="/admin">
                             <button ><span className="border border-black rounded-md p-2">Admin Page</span></button>
                         </LinkContainer>
                         : <></>}
+                    
                 </div>
                 
                 <div className="container">

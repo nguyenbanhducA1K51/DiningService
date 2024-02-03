@@ -1,25 +1,16 @@
 import Calendar from 'react-calendar';
 import { useState } from 'react';
-export const Calendar = (prop) => {   
-    const {dateCalendar}=prop
-    const [calendarVisible, setCalendarVisible] = useState(false);
-    const toggleCalendar = () => {
-        setCalendarVisible(!calendarVisible);
-    };
+export const CustomCalendar = ({prop}) => {   
+    const {dateCalendar,updateAnchorDate}=prop
 
-    const closeCalendar = () => {
-        setCalendarVisible(false);
-    };
     return (
         <div className="col d-flex flex-column justify-content-center align-items-center" style={{
             position: 'relative'
         }}>
 
-            <div>
-
-                {calendarVisible && (
+            <div>                   
                     <div
-                        ref={calendarRef}
+                      
                         style={{
                             display: "inline-block",
                             position: 'absolute',
@@ -37,10 +28,8 @@ export const Calendar = (prop) => {
                         />
                       
                     </div>
-                )}
+              
             </div>
-
-
         </div>
     )
 }

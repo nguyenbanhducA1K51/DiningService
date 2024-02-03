@@ -4,10 +4,10 @@ import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 
 import { useDispatch, useSelector } from "react-redux"
-import { fetchKeyword,postKeyword, selectError, resetError } from '../../slices/clientMenu';
-
+import {selectAnchor,fetchUserKeyword, fetchKeyword,postKeyword, selectError, resetError } from '../../slices/clientMenu';
 export const CardUserKeyword = ({ prop }) => {
     const dispatch = useDispatch()
+    const anchorDate = useSelector(selectAnchor)
     const { userKeywords, foodId, date, modalVisible, setModalVisible } = prop
     const [keywords, setKeywords] = useState(userKeywords ? userKeywords : [])
     const APIerror = useSelector(selectError)
@@ -49,10 +49,12 @@ export const CardUserKeyword = ({ prop }) => {
     const updateKeywords = () => {
         console.log(date,foodId,keywords)
         dispatch(postKeyword({ date: date, food_id: foodId, keywords: keywords.slice() }))
+       console.log("anchor::", anchorDate)
+        dispatch(fetchKeyword({ anchorDate: anchorDate }))
+        dispatch(fetchUserKeyword({ anchorDate: anchorDate }))   
         if (!APIerror) {
             toast.success(" Success update keywords")
         }
-        // dispatch(fetchKeyword())
     }
 
     return (
