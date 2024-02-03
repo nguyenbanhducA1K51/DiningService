@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler"
 import { Food } from "../models/foodModel"
 import { dailyFood } from "../models/dailyFoodModel"
+import { Keyword } from "../models/keywordModel"
 import { encodeImage } from "../utils/images"
 import mongoose from "mongoose"
 import path from "path"
@@ -58,10 +59,25 @@ try {
   const object_id = new mongoose.Types.ObjectId(food_id);
   const deletedRecord = await Food.findOneAndRemove({ _id: object_id });
   if (deletedRecord) {
+    const imagePath = path.join(IMG_STORE, deletedRecord.fileIden)
 
-   
-    const deletedDailyItem = await dailyFood.deleteMany({ foodId: object_id })
+    fs.unlink(imagePath, (err) => {
+      if (err) {
+        console.error(`Error deleting the image file: ${err}`);
+      } else {
+        console.log(`Image file was deleted successfully.`);
+      }
+    })
 
+    const dailyFoodRecords = await dailyFood.find({ foodId: object_id })
+    
+    if (dailyFoodRecords) {  
+      dailyFoodRecords.map(async(item, idx) => {
+            const doc = await Keyword.deleteMany({dailyFoodId:item._id})
+        })
+      }
+      const deleteDocs = await dailyFood.deleteMany({ foodId: object_id })
+    
     res.status(200).json({ message: "Deleted item" });
   } else {
 

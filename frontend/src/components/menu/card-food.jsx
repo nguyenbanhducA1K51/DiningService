@@ -12,9 +12,8 @@ export const CardFood = ({ prop }) => {
     
     return (
        
-        <div className=" flex flex-col w-36 h-36  bg-slate-500 rounded-md" style={{ backgroundImage: `url(data:${extend};base64,${imageData})`, backgroundSize: 'cover', }}>
+        <div className=" flex flex-col w-36 h-36 m-2 bg-slate-500 rounded-md" style={{ backgroundImage: `url(data:${extend};base64,${imageData})`, backgroundSize: 'cover', }}>
             <div className=" flex justify-between flex-col items-center m-1  h-full">
-                {/* <span>go</span> */}
                 <div className="flex items-center justify-center space-x-2 ">
                     <div className=' '>
 

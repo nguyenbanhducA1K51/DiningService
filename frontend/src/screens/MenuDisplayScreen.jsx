@@ -29,7 +29,6 @@ const MenuDisplayScreen = () => {
     const [calendarVisible, setCalendarVisible] = useState(false);
     const [dateCalendar, setDateCalendar] = useState(null)
     const calendarRef = useRef(null);
-
     const DEFAULT_DATE = "2023-10-25"
     const toggleCalendar = () => {
         setCalendarVisible(!calendarVisible);
@@ -71,15 +70,21 @@ const MenuDisplayScreen = () => {
         dispatch(setAnchorDate({ anchorDate: formattedDate }))
     }
 
-
+    const updateKeywords = () => {
+        dispatch(fetchKeyword({ anchorDate: anchorDate }))
+        dispatch(fetchUserKeyword({ anchorDate: anchorDate }))
+    }
+    const updateMenu = () => {
+        dispatch(fetchMenu({ date: anchorDate }))
+    }
     useEffect(() => {
         if (anchorDate) {
             console.log(" anchordate change")
             setDateCalendar(reduceToFullDate(anchorDate))
-            dispatch(fetchMenu({ date: anchorDate }))
-            dispatch(fetchKeyword({ anchorDate: anchorDate }))
-            dispatch(fetchUserKeyword({ anchorDate: anchorDate }))
-            // dispatch(fetchRating({ date: anchorDate }))
+            updateKeywords()
+            updateMenu()
+           
+            
         }
     }, [anchorDate])
 
@@ -120,7 +125,7 @@ const MenuDisplayScreen = () => {
         return (
             <>
                 <span className="bold-text"> {dateToWeekDay(day)} {day}</span>
-                <div className="m-2 flex flex-wrap items-center space-x-4 justify-center space-y-2" >
+                <div className="m-2 flex flex-wrap items-center  justify-center space-y-2" >
                     {Object.keys(dailymenu).map((id, index) => (                     
                         renderFoodCard(day, dailymenu, id, index)
                     ))}
@@ -183,11 +188,10 @@ const MenuDisplayScreen = () => {
                     <button onClick={e => toggleCalendar()} className="btn btn-dark">Show Calendar</button>
 
                 </div>
-                    {isAuthorized ?
+                    {isAuthorized ()?
 
                         <LinkContainer to="/admin">
-
-                            <button className="btn btn-outline-dark ">Admin Page</button>
+                            <button ><span className="border border-black rounded-md p-2">Admin Page</span></button>
                         </LinkContainer>
                         : <></>}
                 </div>

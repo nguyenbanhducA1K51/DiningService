@@ -50,8 +50,9 @@ const CreateItemScreen = () => {
         }
         setFoodTitle("")
         setFoodDescription("")
-        setImageFile(null)
-        // document.getElementById("image").files[0]=null
+        // setImageFile("")
+        document.getElementById("image").value = ""
+        setImageFile("")
 
     }
     return (
