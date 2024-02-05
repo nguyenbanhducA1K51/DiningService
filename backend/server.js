@@ -19,7 +19,6 @@ const grandPath = path.dirname(__dirname);
 app.use("/image", express.static(path.join(grandPath, "storage")))
 app.use('/api/users', userRoutes)
 app.use('/api/dining', diningRoute)
-
 if (process.env.NODE_ENV === "production") {
 
     const rootpath = path.resolve(path.dirname(__dirname))
