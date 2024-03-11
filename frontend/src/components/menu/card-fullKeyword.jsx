@@ -4,10 +4,9 @@ export const FloatFullKeyword = ({ prop }) => {
     const { keywords,modelVisible, modelClose}=prop
     return (
         <>
-<div> <span> full keyword</span></div>
             <Modal  show={modelVisible} onHide={modelClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Full keywords </Modal.Title>
+                    {/* <Modal.Title>Full keywords </Modal.Title> */}
                 </Modal.Header>
                 <Modal.Body>
 

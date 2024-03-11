@@ -11,7 +11,7 @@ import { reduceToFullDate } from "../helper/calculateDay";
 import { LinkContainer } from "react-router-bootstrap";
 import { CardFood } from "../components/menu/card-food";
 import { CustomCalendar } from "../components/calendar";
-
+import { CiCalendarDate } from "react-icons/ci";
 import { ClickOutsideComponent } from "../components/ClickOutsideComponent";
 const MenuDisplayScreen = () => {
 
@@ -126,15 +126,16 @@ const MenuDisplayScreen = () => {
             <div className="py-5 " >
                 <div className="flex justify-between">
 
-                <div className="d-flex  m-3">
-                        <button onClick={e => setCalendarVisible(true)} className="btn btn-dark">Show Calendar</button>
+                    <div className="d-flex  m-3">
+
+                        <button onClick={e => setCalendarVisible(true)} className="btn border border-gray-400">   <CiCalendarDate /></button>
 
                     </div>
                     
                     {isAuthorized ()?
 
                         <LinkContainer to="/admin">
-                            <button ><span className="border border-black rounded-md p-2">Admin Page</span></button>
+                            <button ><span className="border border-black rounded-md p-2">Admin</span></button>
                         </LinkContainer>
                         : <></>}
                     

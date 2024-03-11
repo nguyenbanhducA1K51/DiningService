@@ -2,6 +2,7 @@ import MenuDisplayScreen from "../screens/MenuDisplayScreen";
 import { useSelector, useDispatch } from 'react-redux'
 import { useDefaultMutation } from "../slices/userApiSlice";
 import { setCredentials } from "../slices/authSlices";
+
 import { toast } from "react-toastify"
 const Hero = () => {
     const dispatch = useDispatch()
@@ -21,33 +22,29 @@ const Hero = () => {
     const landing = () => {
         return (
             <>
-                <div>
-                    <div className="flex flex-col space-y-6 text-white mt-3">
-                      
-                        <h2 className=" text-3xl font-semibold text-center ">
-                            Dining service rating
-                        </h2>
-                        <div className="  flex flex-col text-center">
-                            <div>
-                               
-                                <span >  This Prototype web-application will provides students
-                                    information of weekly menu, and show their feeling !</span>
-                            </div>
-                        
+                <div className="flex ">
+                    <div className=" flex flex-col w-1/2">
 
-                            <div>
-
-                                <span> Besides, the Admin functionality will help manager to upload and schedule food on weekly basis !</span>
+                        <div>
+                            
+                        <span className="block text-[72px]">
+                            Browse the menu and see how people feel !
+                        </span>
+                        <span className="block text-2xl">
+                        Here we provide the weekly menu with information so that you can understand and value what we bring. 
+                        </span>
                             </div>
 
-
-                        </div>
-                        <div className="flex items-center justify-center space-x-4">
+                        <div className="flex items-center justify-start space-x-4 my-4">
                             <button type="button" className="btn btn-dark" onClick={e => { trialLogin("admin") }}> Try admin</button>
-                            <button type="button" className="btn btn-outline-light" onClick={e => { trialLogin("user") }}> Try student</button>
+                            <button type="button" className="btn btn-outline-dark" onClick={e => { trialLogin("user") }}> Try student</button>
                         </div>
                     </div>
 
+
+                <div className="flex justify-center mx-4 my-4 ">
+                        <img className="object-contain max-w-[500px]" src="/chicken-hero.png" alt="" /> 
+                </div>
                 </div>
 
             </>
