@@ -30,7 +30,7 @@ export const CardFood = ({ prop }) => {
                     </div>
                 </div>
 
-                <div className="flex justify-around">
+                <div className="flex justify-around w-full">
                     <CardKeyword prop={{ keywords }} />
                 </div>
 

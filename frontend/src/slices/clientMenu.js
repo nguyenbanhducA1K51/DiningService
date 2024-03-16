@@ -87,8 +87,7 @@ export const fetchRating = createAsyncThunk(
     }
 )
 export const fetchKeyword = createAsyncThunk(
-    "clientMenu/fetchKeyword", async (data) => {
-        
+    "clientMenu/fetchKeyword", async (data) => {    
         try {
           
             const params = data
@@ -158,12 +157,12 @@ const clientMenuSlice = createSlice({
                 
             })
             .addCase(fetchKeyword.fulfilled, (state, action) => {
-                console.log("week::", action.payload)
+               
                 state.weekKeyword=action.payload
                
             })
             .addCase(fetchUserKeyword.fulfilled, (state, action) => {
-                console.log("user::", action.payload)
+                // console.log("user::", action.payload)
                 state.userWeekKeyword = action.payload
 
             })
